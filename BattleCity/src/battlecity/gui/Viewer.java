@@ -11,6 +11,7 @@ import java.awt.Dimension;
 public class Viewer extends Canvas implements Runnable{
 
      private Dimension dim;
+     private Scene sc;
 
     public Viewer(Dimension dim) {
         this.dim = dim;
@@ -29,5 +30,7 @@ public class Viewer extends Canvas implements Runnable{
     public void run() {
         
     }
+    
+    
     
 }
