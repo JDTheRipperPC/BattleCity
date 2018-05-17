@@ -1,6 +1,8 @@
 package battlecity.game.items;
 
 import battlecity.game.Item;
+import battlecity.socket.ClientSocket;
+import java.awt.image.BufferedImage;
 
 /**
  *
@@ -8,9 +10,18 @@ import battlecity.game.Item;
  */
 public class Tank extends Item {
 
+    private ClientSocket cs;
+
+    public Tank(int axisX, int axisY, int life, float speed, BufferedImage imagenPath, ClientSocket cs) {
+        super(axisX, axisY, life, speed, imagenPath);
+        this.cs = cs;
+    }
+
+    
+   
     @Override
     public void run() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
-    
+
 }
