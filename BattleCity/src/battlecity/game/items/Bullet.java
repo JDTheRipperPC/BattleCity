@@ -1,12 +1,19 @@
 package battlecity.game.items;
 
 import battlecity.game.Item;
+import java.awt.image.BufferedImage;
 
 /**
  *
  * @author xGod
  */
 public class Bullet extends Item{
+
+    public Bullet(int axisX, int axisY, int life, float speed, BufferedImage imagenPath) {
+        super(axisX, axisY, life, speed, imagenPath);
+    }
+    
+    
 
     @Override
     public void run() {
