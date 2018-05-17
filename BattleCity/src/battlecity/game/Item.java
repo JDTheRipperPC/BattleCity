@@ -1,5 +1,6 @@
 package battlecity.game;
 
+import battlecity.gui.Viewer;
 import battlecity.socket.ClientSocket;
 import java.awt.image.BufferedImage;
 
@@ -12,19 +13,18 @@ public abstract class Item implements Runnable {
     private int axisX;
     private int axisY;
     private int life;
-    private float speed;
-    
+    private float speedX;
+    private float speedY;
+
+    private Viewer vw;
     private BufferedImage imagenPath;
 
-    public Item(int axisX, int axisY, int life, float speed, BufferedImage imagenPath) {
+    public Item(int axisX, int axisY, int life, BufferedImage imagenPath) {
         this.axisX = axisX;
         this.axisY = axisY;
         this.life = life;
-        this.speed = speed;
         this.imagenPath = imagenPath;
     }
-    
-    
 
     /**
      * Orientation class to help us rotate objects and know their direction
@@ -75,9 +75,7 @@ public abstract class Item implements Runnable {
         }
     }
 
-
     //---------------------- GETTERS AND SETTERS -------------------------------
-
     public int getAxisX() {
         return axisX;
     }
@@ -90,14 +88,21 @@ public abstract class Item implements Runnable {
         return life;
     }
 
-    public float getSpeed() {
-        return speed;
+    public float getSpeedX() {
+        return speedX;
+    }
+
+    public float getSpeedY() {
+        return speedY;
     }
 
     public BufferedImage getImagenPath() {
         return imagenPath;
     }
 
+    public Viewer getViewer() {
+        return this.vw;
+    }
 
     public void setAxisX(int axisX) {
         this.axisX = axisX;
@@ -111,18 +116,21 @@ public abstract class Item implements Runnable {
         this.life = life;
     }
 
-    public void setSpeed(float speed) {
-        this.speed = speed;
+    public void setSpeedX(float speed) {
+        this.speedX = speed;
+    }
+
+    public void setSpeedY(float speed) {
+        this.speedY = speed;
     }
 
     public void setImagenPath(BufferedImage imagenPath) {
         this.imagenPath = imagenPath;
     }
 
-    
+    public void setViewer(Viewer vw) {
+        this.vw = vw;
+    }
+
     //---------------------- Publics -------------------------------------------    
-
-
-    
-
 }
