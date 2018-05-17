@@ -9,8 +9,8 @@ import java.awt.image.BufferedImage;
  */
 public class Bullet extends Item{
 
-    public Bullet(int axisX, int axisY, int life, float speed, BufferedImage imagenPath) {
-        super(axisX, axisY, life, speed, imagenPath);
+    public Bullet(int axisX, int axisY, int life, BufferedImage imagenPath) {
+        super(axisX, axisY, life, imagenPath);
     }
     
     

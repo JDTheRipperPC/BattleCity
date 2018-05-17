@@ -12,16 +12,14 @@ public class Tank extends Item {
 
     private ClientSocket cs;
 
-    public Tank(int axisX, int axisY, int life, float speed, BufferedImage imagenPath, ClientSocket cs) {
-        super(axisX, axisY, life, speed, imagenPath);
+    public Tank(int axisX, int axisY, int life, BufferedImage imagenPath, ClientSocket cs) {
+        super(axisX, axisY, life, imagenPath);
         this.cs = cs;
     }
 
-    
-   
     @Override
     public void run() {
-        
+
     }
 
 }
