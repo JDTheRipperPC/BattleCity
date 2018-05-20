@@ -62,12 +62,12 @@ public class Tank extends Item implements ItemInterface{
                 break;
             case SLOWDOWN:
                 //reduce speed 
-                if(super.getSpeedX()>0){
-                    
+                if(super.getSpeedX()>0){                    
                     float f = (float) (super.getSpeedX()*Math.random() * (0.75 - 0.25));
                     this.setSpeedX(f);
                 }else{
-                    
+                    float f = (float) (super.getSpeedY()*Math.random() * (0.75 - 0.25));
+                    this.setSpeedY(f);
                 }
                 break;
             case TAKEDMG:

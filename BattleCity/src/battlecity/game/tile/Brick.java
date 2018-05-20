@@ -6,11 +6,17 @@
 package battlecity.game.tile;
 
 import battlecity.game.Tile;
+import battlecity.gui.Viewer;
 
 /**
  *
  * @author xGod
  */
 public class Brick extends Tile{
+
+    @Override
+    public void paint(Viewer v) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
