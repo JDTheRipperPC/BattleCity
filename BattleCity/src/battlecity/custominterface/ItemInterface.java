@@ -11,19 +11,10 @@ package battlecity.custominterface;
  */
 public interface ItemInterface {
     
-    //mover
+  
     public void move();
-    
-    //morir 
-    public void explode();
-    
-    public void doNoise();
-    
+    public void explode();  
+    public void doNoise();  
     public void colide();
-    
-    
-    
-    
-    
-    
+
 }
