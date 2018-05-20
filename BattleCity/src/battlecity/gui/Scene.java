@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * @author xGod
  */
 public class Scene {
-    
+
     private ArrayList<Item> items;
     private ArrayList<Tile> tiles;
 

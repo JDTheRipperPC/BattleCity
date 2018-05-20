@@ -2,17 +2,33 @@ package battlecity;
 
 import battlecity.game.items.Tank;
 import battlecity.gui.Viewer;
+import battlecity.util.AudioPlayer;
 import battlecity.util.BufferedImageLoader;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
+import sun.audio.AudioStream;
 
 /**
  *
@@ -129,6 +145,10 @@ public class Main extends JFrame implements KeyListener {
         mainPanel.add(viewer, sl);
     }
 
+    static { // Needed to play sound in background (eg. explosions)
+        JFXPanel fxPanel = new JFXPanel();
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -136,6 +156,10 @@ public class Main extends JFrame implements KeyListener {
         BufferedImageLoader.getInstance().loadBufferFromProperties("res/conf/baldosas.properties");
         BufferedImageLoader.getInstance().loadBufferFromProperties("res/conf/misc.properties");
         new Main().setVisible(true);
+        //
+        //
+        AudioPlayer player = new AudioPlayer(new File("res/audio/background.wav"));
+        new Thread(player).start();
     }
 
     @Override
