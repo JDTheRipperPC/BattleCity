@@ -1,13 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package battlecity;
 
+import battlecity.game.tile.Brick;
 import battlecity.gui.Viewer;
+import battlecity.util.BufferedImageLoader;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
@@ -18,11 +17,11 @@ import javax.swing.SpringLayout;
  */
 public class Main extends JFrame{
 private Dimension dim;
-    
+
     private SpringLayout sl;
-    
+
     private JPanel mainPanel;
-    
+
     private Viewer viewer;
 
     public Main() {
@@ -71,6 +70,7 @@ private Dimension dim;
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        BufferedImageLoader.getInstance().loadBufferFromProperties("res/conf/baldosas.properties");
         new Main().setVisible(true);
     }
 

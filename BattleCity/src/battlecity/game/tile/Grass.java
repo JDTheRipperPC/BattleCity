@@ -1,12 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package battlecity.game.tile;
 
 import battlecity.game.Tile;
 import battlecity.gui.Viewer;
+import battlecity.util.BufferedImageLoader;
+import java.awt.Graphics;
 
 /**
  *
@@ -14,9 +11,24 @@ import battlecity.gui.Viewer;
  */
 public class Grass extends Tile {
 
+    public Grass() {
+        super.setBi(BufferedImageLoader
+                .getInstance()
+                .getBufferMap()
+                .get("tile_grass")
+        );
+    }
+
     @Override
     public void paint(Viewer v) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Graphics g = v.getGraphics();
+        if (g == null) {
+            return;
+        }
+        g.drawImage(super.getBi(),
+                super.getCoordinateX(),
+                super.getCoordinateY(),
+                null);
     }
-    
+
 }
