@@ -3,6 +3,10 @@ package battlecity.game.tile;
 import battlecity.game.Tile;
 import battlecity.gui.Viewer;
 import battlecity.util.BufferedImageLoader;
+import java.awt.Graphics;
+import java.io.File;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 /**
  *
@@ -29,6 +33,14 @@ public class Brick extends Tile {
                 super.getCoordinateX(),
                 super.getCoordinateY(),
                 null);
+    }
+
+    public void explosion() {
+        new Thread(() -> {
+            Media m = new Media(new File("res/audio/explosion.wav").toURI().toString());
+            MediaPlayer mp = new MediaPlayer(m);
+            mp.play();
+        }).start();
     }
 
 }
