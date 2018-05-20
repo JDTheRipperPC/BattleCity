@@ -16,6 +16,7 @@ public class Viewer extends Canvas implements Runnable{
     public Viewer(Dimension dim) {
         this.dim = dim;
         initProperties();
+        initObjects();
     }
     
     private void initProperties(){
@@ -24,6 +25,18 @@ public class Viewer extends Canvas implements Runnable{
         setMaximumSize(dim);
         setPreferredSize(dim);
         setBackground(Color.black);
+    }
+    
+    private void initObjects(){
+        sc = new Scene();
+    }
+
+    public Scene getSc() {
+        return sc;
+    }
+
+    public void setSc(Scene sc) {
+        this.sc = sc;
     }
     
     @Override

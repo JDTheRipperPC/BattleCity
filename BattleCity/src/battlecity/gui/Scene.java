@@ -13,6 +13,11 @@ public class Scene {
     private ArrayList<Item> items;
     private ArrayList<Tile> tiles;
 
+    public Scene() {
+        items = new ArrayList<>();
+        tiles = new ArrayList<>();
+    }
+
     public void load(){
         // TODO
     }
