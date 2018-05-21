@@ -69,10 +69,10 @@ public class Viewer extends Canvas implements Runnable {
     public boolean checkCollision(Item i) {
 
         //following if's check if collides with walls
-        if ((i.getAxisX() + i.getSpeedX()) > this.dim.width) {
+        if (i.getNewX() > this.dim.width) {
             return true;
         }
-        if ((i.getAxisY() + i.getSpeedY()) > this.dim.height) {
+        if (i.getNewY() > this.dim.height) {
             return true;
         }
         //following if's check if collides with items or tiles
@@ -88,8 +88,8 @@ public class Viewer extends Canvas implements Runnable {
     private boolean checkCollisionWithTiles(Item i, ArrayList<Tile> t) {
         for (Tile x : t) {
             for (int j = 0; j <= 32; j++) {
-                if ((x.getCoordinateX() + j == i.getAxisX() + i.getSpeedX()
-                        || x.getCoordinateY() + j == i.getAxisY() + i.getSpeedY())
+                if ((x.getCoordinateX() + j == i.getNewX()
+                        || x.getCoordinateY() + j == i.getNewY())
                         && !x.getClass().getSimpleName().equals("Grass")
                         || !x.getClass().getSimpleName().equals("Water")) {
                     
@@ -104,8 +104,8 @@ public class Viewer extends Canvas implements Runnable {
         for (Item x : allItems) {
             if (x != i && !x.getClass().getSimpleName().equals("Bullet")) {
                 for (int j = 0; j <= 32; j++) {
-                    if ((x.getAxisX() + j == i.getAxisX() + i.getSpeedX()
-                            || x.getAxisY() + j == i.getAxisY() + i.getSpeedY())) {
+                    if ((x.getAxisX() + j == i.getNewX()
+                            || x.getAxisY() + j == i.getNewY())) {
                         x.takeDmg();
                         return true;
                     }

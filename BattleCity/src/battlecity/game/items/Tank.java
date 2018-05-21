@@ -124,14 +124,18 @@ public class Tank extends Item {
         elapsedNanos = now - super.getLastUpdateTime();
         super.setLastUpdateTime(now);
         elapsedSeconds = ((float) (elapsedNanos)) / 1000000000.0f;
+        
+        super.setNewX(super.getAxisX() + (int) (elapsedSeconds *  super.getSpeedX()));
+        super.setNewY(super.getAxisY() + (int) (elapsedSeconds *  super.getSpeedY()));
+        
         this.updatePosition(elapsedSeconds);
 
     }
 
     private synchronized void updatePosition(float elapsedSeconds) {
 
-        super.setAxisX(super.getAxisX() * (int) (elapsedSeconds *  super.getSpeedX()));
-        super.setAxisY(super.getAxisY() * (int) (elapsedSeconds *  super.getSpeedY()));
+        super.setAxisX(super.getNewX());
+        super.setAxisY(super.getNewY());
     }
 
 }

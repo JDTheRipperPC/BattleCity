@@ -13,6 +13,8 @@ public abstract class Item implements Runnable, ItemInterface {
 
     private int axisX;
     private int axisY;
+    private int newX;
+    private int newY;
     private int life;
     private float speedX;
     private float speedY;
@@ -88,6 +90,14 @@ public abstract class Item implements Runnable, ItemInterface {
         return axisY;
     }
 
+    public synchronized int getNewX() {
+        return this.newX;
+    }
+
+    public synchronized int getNewY() {
+        return this.newY;
+    }
+
     public synchronized int getLife() {
         return life;
     }
@@ -149,6 +159,14 @@ public abstract class Item implements Runnable, ItemInterface {
     
     public synchronized void setLastUpdateTime(long l){
         this.lastUpdateTime=l;
+    }
+
+    public synchronized void setNewX(int i){
+        this.newX = i;
+    }
+
+    public synchronized void setNewY(int i){
+        this.newY = i;
     }
 
     //---------------------- Publics -------------------------------------------    
