@@ -17,7 +17,7 @@ public class Viewer extends Canvas implements Runnable {
     private Scene sc;
 
     public static enum AllowedAction {
-        MOVE, TAKEDMG, SLOWDOWN, EXPLODE;
+        MOVE, TAKEDMG, SLOWDOWN, EXPLODE, BLOCKED;
     }
 
     public Viewer(Dimension dim) {
@@ -34,7 +34,7 @@ public class Viewer extends Canvas implements Runnable {
         setBackground(Color.black);
     }
 
-    private void initObjects(){
+    private void initObjects() {
         sc = new Scene();
     }
 
@@ -52,13 +52,22 @@ public class Viewer extends Canvas implements Runnable {
     }
 
     public AllowedAction itemCanDo(Item i) {
-        return null;
+        if(checkCollision(i)){
+            return AllowedAction.BLOCKED;
+        }
+        
+        return AllowedAction.MOVE;
 
     }
-
+    
+    public boolean checkSlow(Item i){
+        i.getAxisX();
+        i.getAxisY();
+        return true;
+    }
     //---------------------------COLLISIONS------------------------------------>
     public boolean checkCollision(Item i) {
-        
+
         //following if's check if collides with walls
         if ((i.getAxisX() + i.getSpeedX()) > this.dim.width) {
             return true;
@@ -67,11 +76,12 @@ public class Viewer extends Canvas implements Runnable {
             return true;
         }
         //following if's check if collides with items or tiles
-        //if(this.checkCollisionWithItems(i, ai)){
-        //return true;}
-        //if(this.checkCollisionWithTiles(i,t)){
-        //return true;}
-        
+        if (this.checkCollisionWithItems(i, this.sc.getItems())) {
+            return true;
+        }
+        if (this.checkCollisionWithTiles(i, this.sc.getTiles())) {
+            return true;
+        }
         return false;
     }
 
@@ -82,6 +92,7 @@ public class Viewer extends Canvas implements Runnable {
                         || x.getCoordinateY() + j == i.getAxisY() + i.getSpeedY())
                         && !x.getClass().getSimpleName().equals("Grass")
                         || !x.getClass().getSimpleName().equals("Water")) {
+                    
                     return true;
                 }
             }
@@ -89,13 +100,13 @@ public class Viewer extends Canvas implements Runnable {
         return false;
     }
 
-    private boolean checkCollisionWithItems(Item i, ArrayList<Item> ai) {
-        for (Item x : ai) {
-            if (x != i) {
+    private boolean checkCollisionWithItems(Item i, ArrayList<Item> allItems) {
+        for (Item x : allItems) {
+            if (x != i && !x.getClass().getSimpleName().equals("Bullet")) {
                 for (int j = 0; j <= 32; j++) {
                     if ((x.getAxisX() + j == i.getAxisX() + i.getSpeedX()
-                            || x.getAxisY() + j == i.getAxisY() + i.getSpeedY())
-                            && !i.getClass().getSimpleName().equals("Bullet")) {
+                            || x.getAxisY() + j == i.getAxisY() + i.getSpeedY())) {
+                        x.takeDmg();
                         return true;
                     }
                 }

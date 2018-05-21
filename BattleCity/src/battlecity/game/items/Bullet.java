@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
  *
  * @author xGod
  */
-public class Bullet extends Item  implements ItemInterface{
+public class Bullet extends Item {
 
     public Bullet(int axisX, int axisY, int life, BufferedImage imagenPath, Orientation o, Viewer vw) {
         super(axisX, axisY, life, imagenPath, o);
@@ -55,6 +55,7 @@ public class Bullet extends Item  implements ItemInterface{
             case TAKEDMG:
                 super.setLife(super.getLife()-1);
                 break;
+                
         }
     }
     
@@ -85,5 +86,12 @@ public class Bullet extends Item  implements ItemInterface{
     public void colide() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void takeDmg() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
 
 }

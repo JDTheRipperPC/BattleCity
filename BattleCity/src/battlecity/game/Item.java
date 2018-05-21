@@ -9,13 +9,14 @@ import java.awt.image.BufferedImage;
  *
  * @author xGod
  */
-public abstract class Item implements Runnable {
+public abstract class Item implements Runnable, ItemInterface {
 
     private int axisX;
     private int axisY;
     private int life;
     private float speedX;
     private float speedY;
+    private volatile long lastUpdateTime;
 
     private Orientation orientation;
     private Viewer vw;
@@ -110,6 +111,9 @@ public abstract class Item implements Runnable {
     public synchronized Viewer getViewer() {
         return this.vw;
     }
+    public synchronized long getLastUpdateTime(){
+        return this.lastUpdateTime;
+    }
 
     public synchronized void setAxisX(int axisX) {
         this.axisX = axisX;
@@ -141,6 +145,10 @@ public abstract class Item implements Runnable {
 
     public synchronized void setOrientation(Orientation o) {
         this.orientation = o;
+    }
+    
+    public synchronized void setLastUpdateTime(long l){
+        this.lastUpdateTime=l;
     }
 
     //---------------------- Publics -------------------------------------------    

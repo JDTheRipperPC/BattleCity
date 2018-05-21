@@ -58,6 +58,7 @@ public class Main extends JFrame implements KeyListener {
                 3,
                 BufferedImageLoader.getInstance()
                         .getBufferMap().get("tanque_amarillo"),
+                null,
                 null
         );
         Tank t2 = new Tank(
@@ -66,6 +67,7 @@ public class Main extends JFrame implements KeyListener {
                 3,
                 BufferedImageLoader.getInstance()
                         .getBufferMap().get("tanque_milka"),
+                null,
                 null
         );
         viewer.getSc().getItems().add(t1);

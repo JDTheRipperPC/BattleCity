@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
  *
  * @author xGod
  */
-public class Tank extends Item implements ItemInterface{
+public class Tank extends Item{
 
     private ClientSocket cs;
 
@@ -22,6 +22,16 @@ public class Tank extends Item implements ItemInterface{
     // overrides --------------
     @Override
     public void run() {
+        super.setLastUpdateTime(System.nanoTime());
+        while(true){
+            try{
+                Thread.sleep(1000/140);
+            }catch(InterruptedException ex){
+            }
+            this.evaluate(super.getViewer().itemCanDo(this));
+            
+        }
+        
 
     }
 
@@ -52,7 +62,7 @@ public class Tank extends Item implements ItemInterface{
     
     //------------------------------------------------------------------------->
     
-    public void evaluate(Viewer.AllowedAction a ){
+    private void evaluate(Viewer.AllowedAction a ){
         switch(a){
             case EXPLODE:
                 this.explode();
@@ -72,6 +82,9 @@ public class Tank extends Item implements ItemInterface{
                 break;
             case TAKEDMG:
                 super.setLife(super.getLife()-1);
+                break;
+            case BLOCKED:
+                //can't move
                 break;
         }
     }
@@ -96,6 +109,10 @@ public class Tank extends Item implements ItemInterface{
     public void colide() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+    @Override
+    public void takeDmg() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
