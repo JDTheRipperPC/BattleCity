@@ -16,14 +16,17 @@ public class Viewer extends Canvas implements Runnable {
 
     private Dimension dim;
     private Scene sc;
+    private boolean game;
 
     public static enum AllowedAction {
-        MOVE, TAKEDMG, SLOWDOWN, EXPLODE;
+        MOVE, TAKEDMG, SLOWDOWN, EXPLODE, BLOCKED;
     }
 
-     private ArrayList<ClientSocket> clients;
-     
+    private ArrayList<ClientSocket> clients;
+
     public Viewer(Dimension dim) {
+
+        this.game = false;
         this.dim = dim;
         initProperties();
         initObjects();
@@ -37,13 +40,21 @@ public class Viewer extends Canvas implements Runnable {
         setBackground(Color.black);
     }
 
-    private void initObjects(){
+    private void initObjects() {
         sc = new Scene();
         clients = new ArrayList<>();
     }
 
     public ArrayList<ClientSocket> getClients() {
         return clients;
+    }
+
+    public boolean isGame() {
+        return this.game;
+    }
+
+    public void setGame(boolean game) {
+        this.game = game;
     }
 
     public void setClients(ArrayList<ClientSocket> clients) {
@@ -60,40 +71,56 @@ public class Viewer extends Canvas implements Runnable {
 
     @Override
     public void run() {
+        this.game = true;
+        while (game) {
+
+        }
 
     }
 
     public AllowedAction itemCanDo(Item i) {
-        return null;
+        if (checkCollision(i)) {
+            return AllowedAction.BLOCKED;
+        }
 
+        return AllowedAction.MOVE;
+
+    }
+
+    public boolean checkSlow(Item i) {
+        i.getAxisX();
+        i.getAxisY();
+        return true;
     }
 
     //---------------------------COLLISIONS------------------------------------>
     public boolean checkCollision(Item i) {
-        
+
         //following if's check if collides with walls
-        if ((i.getAxisX() + i.getSpeedX()) > this.dim.width) {
+        if (i.getNewX() > this.dim.width) {
             return true;
         }
-        if ((i.getAxisY() + i.getSpeedY()) > this.dim.height) {
+        if (i.getNewY() > this.dim.height) {
             return true;
         }
         //following if's check if collides with items or tiles
-        //if(this.checkCollisionWithItems(i, ai)){
-        //return true;}
-        //if(this.checkCollisionWithTiles(i,t)){
-        //return true;}
-        
+        if (this.checkCollisionWithItems(i, this.sc.getItems())) {
+            return true;
+        }
+        if (this.checkCollisionWithTiles(i, this.sc.getTiles())) {
+            return true;
+        }
         return false;
     }
 
     private boolean checkCollisionWithTiles(Item i, ArrayList<Tile> t) {
         for (Tile x : t) {
             for (int j = 0; j <= 32; j++) {
-                if ((x.getCoordinateX() + j == i.getAxisX() + i.getSpeedX()
-                        || x.getCoordinateY() + j == i.getAxisY() + i.getSpeedY())
+                if ((x.getCoordinateX() + j == i.getNewX()
+                        || x.getCoordinateY() + j == i.getNewY())
                         && !x.getClass().getSimpleName().equals("Grass")
                         || !x.getClass().getSimpleName().equals("Water")) {
+
                     return true;
                 }
             }
@@ -101,13 +128,13 @@ public class Viewer extends Canvas implements Runnable {
         return false;
     }
 
-    private boolean checkCollisionWithItems(Item i, ArrayList<Item> ai) {
-        for (Item x : ai) {
-            if (x != i) {
+    private boolean checkCollisionWithItems(Item i, ArrayList<Item> allItems) {
+        for (Item x : allItems) {
+            if (x != i && !x.getClass().getSimpleName().equals("Bullet")) {
                 for (int j = 0; j <= 32; j++) {
-                    if ((x.getAxisX() + j == i.getAxisX() + i.getSpeedX()
-                            || x.getAxisY() + j == i.getAxisY() + i.getSpeedY())
-                            && !i.getClass().getSimpleName().equals("Bullet")) {
+                    if ((x.getAxisX() + j == i.getNewX()
+                            || x.getAxisY() + j == i.getNewY())) {
+                        x.takeDmg();
                         return true;
                     }
                 }
