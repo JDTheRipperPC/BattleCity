@@ -14,8 +14,8 @@ public class Tank extends Item {
 
     private ClientSocket cs;
 
-    public Tank(int axisX, int axisY, int life, BufferedImage imagenPath, Orientation o, ClientSocket cs) {
-        super(axisX, axisY, life, imagenPath, o);
+    public Tank(BufferedImage imagenPath, ClientSocket cs) {
+        super(imagenPath);
         this.cs = cs;
     }
 
@@ -53,8 +53,8 @@ public class Tank extends Item {
      */
     public void shoot() {
         BufferedImage bllet = null;
-        Bullet b = new Bullet(this.getAxisX(), this.getAxisY(), 1, bllet, super.getOrientation(), this.getViewer());
-        new Thread(b).start();
+        //Bullet b = new Bullet(this.getAxisX(), this.getAxisY(), 1, bllet, super.getOrientation(), this.getViewer());
+        //new Thread(b).start();
     }
 
     //------------------------------------------------------------------------->
@@ -124,10 +124,10 @@ public class Tank extends Item {
         elapsedNanos = now - super.getLastUpdateTime();
         super.setLastUpdateTime(now);
         elapsedSeconds = ((float) (elapsedNanos)) / 1000000000.0f;
-        
-        super.setNewX(super.getAxisX() + (int) (elapsedSeconds *  super.getSpeedX()));
-        super.setNewY(super.getAxisY() + (int) (elapsedSeconds *  super.getSpeedY()));
-        
+
+        super.setNewX(super.getAxisX() + (int) (elapsedSeconds * super.getSpeedX()));
+        super.setNewY(super.getAxisY() + (int) (elapsedSeconds * super.getSpeedY()));
+
         this.updatePosition(elapsedSeconds);
 
     }
@@ -136,6 +136,8 @@ public class Tank extends Item {
 
         super.setAxisX(super.getNewX());
         super.setAxisY(super.getNewY());
+        super.setSpeedX(0);
+        super.setSpeedY(0);
     }
 
 }

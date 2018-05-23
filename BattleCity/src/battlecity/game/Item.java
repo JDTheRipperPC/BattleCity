@@ -24,12 +24,8 @@ public abstract class Item implements Runnable, ItemInterface {
     private Viewer vw;
     private BufferedImage imagenPath;
 
-    public Item(int axisX, int axisY, int life, BufferedImage imagenPath, Orientation o) {
-        this.axisX = axisX;
-        this.axisY = axisY;
-        this.life = life;
+    public Item(BufferedImage imagenPath) {
         this.imagenPath = imagenPath;
-        this.orientation = o;
     }
 
     /**

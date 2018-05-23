@@ -16,14 +16,17 @@ public class Viewer extends Canvas implements Runnable {
 
     private Dimension dim;
     private Scene sc;
+    private boolean game;
 
     public static enum AllowedAction {
         MOVE, TAKEDMG, SLOWDOWN, EXPLODE, BLOCKED;
     }
 
-     private ArrayList<ClientSocket> clients;
-     
+    private ArrayList<ClientSocket> clients;
+
     public Viewer(Dimension dim) {
+
+        this.game = false;
         this.dim = dim;
         initProperties();
         initObjects();
@@ -46,6 +49,14 @@ public class Viewer extends Canvas implements Runnable {
         return clients;
     }
 
+    public boolean isGame() {
+        return this.game;
+    }
+
+    public void setGame(boolean game) {
+        this.game = game;
+    }
+
     public void setClients(ArrayList<ClientSocket> clients) {
         this.clients = clients;
     }
@@ -60,23 +71,28 @@ public class Viewer extends Canvas implements Runnable {
 
     @Override
     public void run() {
+        this.game = true;
+        while (game) {
+
+        }
 
     }
 
     public AllowedAction itemCanDo(Item i) {
-        if(checkCollision(i)){
+        if (checkCollision(i)) {
             return AllowedAction.BLOCKED;
         }
-        
+
         return AllowedAction.MOVE;
 
     }
-    
-    public boolean checkSlow(Item i){
+
+    public boolean checkSlow(Item i) {
         i.getAxisX();
         i.getAxisY();
         return true;
     }
+
     //---------------------------COLLISIONS------------------------------------>
     public boolean checkCollision(Item i) {
 
@@ -104,7 +120,7 @@ public class Viewer extends Canvas implements Runnable {
                         || x.getCoordinateY() + j == i.getNewY())
                         && !x.getClass().getSimpleName().equals("Grass")
                         || !x.getClass().getSimpleName().equals("Water")) {
-                    
+
                     return true;
                 }
             }

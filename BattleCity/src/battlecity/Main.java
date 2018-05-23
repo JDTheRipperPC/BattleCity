@@ -156,11 +156,12 @@ public class Main extends JFrame implements KeyListener {
     public void keyPressed(KeyEvent e) {
         System.out.println("Key PRESSED: " + e.getKeyCode());
         if (e.getKeyCode() == 10) { // KeyCode (10) == <Enter>
-            if (viewer.getSc().getItems().size() < 2) {
+            if (viewer.getClients().size() < 2) {
                 System.err.println("Faltan jugadores");
             } else {
                 menuPanel.setVisible(false);
                 mainPanel.setVisible(true);
+                new Thread(viewer).start();
             }
         }
     }

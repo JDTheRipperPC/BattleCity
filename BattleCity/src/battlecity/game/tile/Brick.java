@@ -33,14 +33,6 @@ public class Brick extends Tile {
                 super.getCoordinateX(),
                 super.getCoordinateY(),
                 null);
-    }
-
-    public void explosion() {
-        new Thread(() -> {
-            Media m = new Media(new File("res/audio/explosion.wav").toURI().toString());
-            MediaPlayer mp = new MediaPlayer(m);
-            mp.play();
-        }).start();
-    }
+    }    
 
 }
