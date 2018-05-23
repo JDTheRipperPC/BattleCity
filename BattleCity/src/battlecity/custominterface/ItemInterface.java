@@ -16,5 +16,6 @@ public interface ItemInterface {
     public void explode();  
     public void doNoise();  
     public void colide();
+    public void takeDmg();
 
 }

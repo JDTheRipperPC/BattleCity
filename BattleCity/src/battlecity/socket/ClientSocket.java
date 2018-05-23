@@ -1,6 +1,7 @@
 package battlecity.socket;
 
 import battlecity.game.items.Tank;
+import battlecity.gui.Viewer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -19,24 +20,30 @@ public class ClientSocket extends Thread {
     private Tank tank;
 
     private Socket client;
-
+    
     private BufferedReader br;
     private BufferedWriter bw;
+    
+    private Viewer viewer;
 
-    public ClientSocket(Socket client) throws IOException {
+    public ClientSocket(Socket client, Viewer v) throws IOException {
         this.client = client;
         br = new BufferedReader(new InputStreamReader(client.getInputStream()));
         bw = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
         bw.write("Hola papa");
         bw.newLine();
         bw.flush();
+        this.viewer = v;
         System.out.println("Nuevo ClientSocket");
+        this.tank = new Tank(null, this);
+        this.viewer.getSc().getItems().add(tank);
+                
     }
 
     @Override
     public void run() {
         String msg;
-        while (tank.getLife() > 0) { // FIXME: add condition GAME RUNNING
+        while (tank.getLife() > 0 && viewer.isGame()) { // FIXME: add condition GAME RUNNING
             try {
                 msg = br.readLine();
                 evaluateMessage(msg);

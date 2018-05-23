@@ -9,24 +9,23 @@ import java.awt.image.BufferedImage;
  *
  * @author xGod
  */
-public abstract class Item implements Runnable {
+public abstract class Item implements Runnable, ItemInterface {
 
     private int axisX;
     private int axisY;
+    private int newX;
+    private int newY;
     private int life;
     private float speedX;
     private float speedY;
+    private volatile long lastUpdateTime;
 
     private Orientation orientation;
     private Viewer vw;
     private BufferedImage imagenPath;
 
-    public Item(int axisX, int axisY, int life, BufferedImage imagenPath, Orientation o) {
-        this.axisX = axisX;
-        this.axisY = axisY;
-        this.life = life;
+    public Item(BufferedImage imagenPath) {
         this.imagenPath = imagenPath;
-        this.orientation = o;
     }
 
     /**
@@ -87,6 +86,14 @@ public abstract class Item implements Runnable {
         return axisY;
     }
 
+    public synchronized int getNewX() {
+        return this.newX;
+    }
+
+    public synchronized int getNewY() {
+        return this.newY;
+    }
+
     public synchronized int getLife() {
         return life;
     }
@@ -109,6 +116,9 @@ public abstract class Item implements Runnable {
 
     public synchronized Viewer getViewer() {
         return this.vw;
+    }
+    public synchronized long getLastUpdateTime(){
+        return this.lastUpdateTime;
     }
 
     public synchronized void setAxisX(int axisX) {
@@ -141,6 +151,18 @@ public abstract class Item implements Runnable {
 
     public synchronized void setOrientation(Orientation o) {
         this.orientation = o;
+    }
+    
+    public synchronized void setLastUpdateTime(long l){
+        this.lastUpdateTime=l;
+    }
+
+    public synchronized void setNewX(int i){
+        this.newX = i;
+    }
+
+    public synchronized void setNewY(int i){
+        this.newY = i;
     }
 
     //---------------------- Publics -------------------------------------------    
