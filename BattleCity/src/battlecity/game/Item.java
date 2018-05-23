@@ -1,5 +1,6 @@
 package battlecity.game;
 
+import battlecity.custominterface.ItemInterface;
 import battlecity.gui.Viewer;
 import battlecity.socket.ClientSocket;
 import java.awt.image.BufferedImage;
@@ -16,14 +17,16 @@ public abstract class Item implements Runnable {
     private float speedX;
     private float speedY;
 
+    private Orientation orientation;
     private Viewer vw;
     private BufferedImage imagenPath;
 
-    public Item(int axisX, int axisY, int life, BufferedImage imagenPath) {
+    public Item(int axisX, int axisY, int life, BufferedImage imagenPath, Orientation o) {
         this.axisX = axisX;
         this.axisY = axisY;
         this.life = life;
         this.imagenPath = imagenPath;
+        this.orientation = o;
     }
 
     /**
@@ -76,60 +79,68 @@ public abstract class Item implements Runnable {
     }
 
     //---------------------- GETTERS AND SETTERS -------------------------------
-    public int getAxisX() {
+    public synchronized int getAxisX() {
         return axisX;
     }
 
-    public int getAxisY() {
+    public synchronized int getAxisY() {
         return axisY;
     }
 
-    public int getLife() {
+    public synchronized int getLife() {
         return life;
     }
 
-    public float getSpeedX() {
+    public synchronized float getSpeedX() {
         return speedX;
     }
 
-    public float getSpeedY() {
+    public synchronized float getSpeedY() {
         return speedY;
     }
 
-    public BufferedImage getImagenPath() {
+    public synchronized BufferedImage getImagenPath() {
         return imagenPath;
     }
 
-    public Viewer getViewer() {
+    public synchronized Orientation getOrientation() {
+        return this.orientation;
+    }
+
+    public synchronized Viewer getViewer() {
         return this.vw;
     }
 
-    public void setAxisX(int axisX) {
+    public synchronized void setAxisX(int axisX) {
         this.axisX = axisX;
     }
 
-    public void setAxisY(int axisY) {
+    public synchronized void setAxisY(int axisY) {
         this.axisY = axisY;
     }
 
-    public void setLife(int life) {
+    public synchronized void setLife(int life) {
         this.life = life;
     }
 
-    public void setSpeedX(float speed) {
+    public synchronized void setSpeedX(float speed) {
         this.speedX = speed;
     }
 
-    public void setSpeedY(float speed) {
+    public synchronized void setSpeedY(float speed) {
         this.speedY = speed;
     }
 
-    public void setImagenPath(BufferedImage imagenPath) {
+    public synchronized void setImagenPath(BufferedImage imagenPath) {
         this.imagenPath = imagenPath;
     }
 
-    public void setViewer(Viewer vw) {
+    public synchronized void setViewer(Viewer vw) {
         this.vw = vw;
+    }
+
+    public synchronized void setOrientation(Orientation o) {
+        this.orientation = o;
     }
 
     //---------------------- Publics -------------------------------------------    

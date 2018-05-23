@@ -18,7 +18,7 @@ public class Grass extends Tile {
                 .get("tile_grass")
         );
     }
-    
+
     @Override
     public void paint(Viewer v) {
         Graphics g = v.getGraphics();
@@ -30,5 +30,5 @@ public class Grass extends Tile {
                 super.getCoordinateY(),
                 null);
     }
-    
+
 }
