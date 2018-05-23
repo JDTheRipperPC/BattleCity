@@ -28,6 +28,12 @@ public abstract class Item implements Runnable, ItemInterface {
         this.imagenPath = imagenPath;
     }
 
+    @Override
+    public String toString() {
+        String imgNull = imagenPath == null ? "Null" : "Not null";
+        return "Position: {" + axisX + ", " + axisY + "}\nBufferedImage is? " + imagenPath;
+    }
+
     /**
      * Orientation class to help us rotate objects and know their direction
      */
@@ -117,7 +123,8 @@ public abstract class Item implements Runnable, ItemInterface {
     public synchronized Viewer getViewer() {
         return this.vw;
     }
-    public synchronized long getLastUpdateTime(){
+
+    public synchronized long getLastUpdateTime() {
         return this.lastUpdateTime;
     }
 
@@ -152,16 +159,16 @@ public abstract class Item implements Runnable, ItemInterface {
     public synchronized void setOrientation(Orientation o) {
         this.orientation = o;
     }
-    
-    public synchronized void setLastUpdateTime(long l){
-        this.lastUpdateTime=l;
+
+    public synchronized void setLastUpdateTime(long l) {
+        this.lastUpdateTime = l;
     }
 
-    public synchronized void setNewX(int i){
+    public synchronized void setNewX(int i) {
         this.newX = i;
     }
 
-    public synchronized void setNewY(int i){
+    public synchronized void setNewY(int i) {
         this.newY = i;
     }
 

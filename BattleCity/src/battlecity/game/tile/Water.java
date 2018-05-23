@@ -9,7 +9,7 @@ import java.awt.Graphics;
  *
  * @author xGod
  */
-public class Water extends Tile{
+public class Water extends Tile {
 
     public Water() {
         super.setBi(BufferedImageLoader

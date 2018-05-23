@@ -33,6 +33,6 @@ public class Brick extends Tile {
                 super.getCoordinateX(),
                 super.getCoordinateY(),
                 null);
-    }    
+    }
 
 }

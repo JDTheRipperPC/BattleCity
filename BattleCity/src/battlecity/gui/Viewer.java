@@ -3,10 +3,15 @@ package battlecity.gui;
 import battlecity.socket.ClientSocket;
 import battlecity.game.Item;
 import battlecity.game.Tile;
+import battlecity.util.BufferedImageLoader;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,6 +22,8 @@ public class Viewer extends Canvas implements Runnable {
     private Dimension dim;
     private Scene sc;
     private boolean game;
+
+    private String[] tankImgPath = new String[]{"tanque_amarillo", "tanque_milka", "tanque_rojo", "tanque_verde"};
 
     public static enum AllowedAction {
         MOVE, TAKEDMG, SLOWDOWN, EXPLODE, BLOCKED;
@@ -72,10 +79,67 @@ public class Viewer extends Canvas implements Runnable {
     @Override
     public void run() {
         this.game = true;
-        while (game) {
-
+        System.out.println("---");
+        for (int i = 0; i < clients.size(); i++) {
+            sc.getItems().get(i).setAxisX(sc.getTankPoint()[i].x * 32);
+            sc.getItems().get(i).setAxisY(sc.getTankPoint()[i].y * 32);
+            sc.getItems().get(i).setImagenPath(BufferedImageLoader.getInstance().getBufferMap().get(tankImgPath[i]));
+            System.out.println(sc.getItems().get(i));
         }
+        System.out.println("---");
+        System.out.println("game start");
+        System.out.println("---");
+        System.out.println(getSize().width);
+        System.out.println(getSize().height);
 
+        while (game) {
+            try {
+                paintAll();
+                Thread.sleep(15);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        System.out.println("game end");
+    }
+
+    public void paint() {
+        paint(getGraphics());
+    }
+
+    public void paintAll() {
+        paintAll(getGraphics());
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        if (g == null) {
+            System.err.println("Graphics null in paint");
+            return;
+        }
+        for (Item i : sc.getItems()) {
+            g.drawImage(i.getImagenPath(), i.getAxisX(), i.getAxisY(), null);
+        }
+        for (Tile t : sc.getTiles()) {
+            g.drawImage(t.getBi(), t.getCoordinateX(), t.getCoordinateY(), null);
+        }
+    }
+
+    @Override
+    public void paintAll(Graphics g) {
+        if (g == null) {
+            System.err.println("Graphics null in paintAll");
+            return;
+        }
+        BufferedImage bi = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_4BYTE_ABGR);
+        for (Item i : sc.getItems()) {
+            g.drawImage(i.getImagenPath(), i.getAxisX(), i.getAxisY(), null);
+        }
+        for (Tile t : sc.getTiles()) {
+            if (t.getClass().getSimpleName().equals("Brick") || t.getClass().getSimpleName().equals("Grass")) {
+                g.drawImage(t.getBi(), t.getCoordinateX(), t.getCoordinateY(), null);
+            }
+        }
     }
 
     public AllowedAction itemCanDo(Item i) {

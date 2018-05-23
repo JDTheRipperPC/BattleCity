@@ -40,7 +40,7 @@ public class Main extends JFrame implements KeyListener {
 
     private void initProperties() {
         setTitle("BattleCity");
-        dim = new Dimension(800, 600);
+        dim = new Dimension(800, 605);
         setSize(dim);
         setMinimumSize(dim);
         setMaximumSize(dim);
@@ -103,7 +103,7 @@ public class Main extends JFrame implements KeyListener {
     }
 
     private void initViewer() {
-        Dimension viewDimension = new Dimension(600, 600);
+        Dimension viewDimension = new Dimension(576, 606);
         viewer = new Viewer(viewDimension);
         sl.putConstraint(SpringLayout.NORTH, viewer, 0, SpringLayout.NORTH, mainPanel);
         sl.putConstraint(SpringLayout.WEST, viewer, 0, SpringLayout.WEST, mainPanel);
