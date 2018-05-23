@@ -1,5 +1,6 @@
 package battlecity.gui;
 
+import battlecity.socket.ClientSocket;
 import battlecity.game.Item;
 import battlecity.game.Tile;
 import java.awt.Canvas;
@@ -20,6 +21,8 @@ public class Viewer extends Canvas implements Runnable {
         MOVE, TAKEDMG, SLOWDOWN, EXPLODE, BLOCKED;
     }
 
+     private ArrayList<ClientSocket> clients;
+     
     public Viewer(Dimension dim) {
         this.dim = dim;
         initProperties();
@@ -36,6 +39,15 @@ public class Viewer extends Canvas implements Runnable {
 
     private void initObjects() {
         sc = new Scene();
+        clients = new ArrayList<>();
+    }
+
+    public ArrayList<ClientSocket> getClients() {
+        return clients;
+    }
+
+    public void setClients(ArrayList<ClientSocket> clients) {
+        this.clients = clients;
     }
 
     public Scene getSc() {

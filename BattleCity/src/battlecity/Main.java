@@ -2,6 +2,7 @@ package battlecity;
 
 import battlecity.game.items.Tank;
 import battlecity.gui.Viewer;
+import battlecity.socket.GameServerSocket;
 import battlecity.util.AudioPlayer;
 import battlecity.util.BufferedImageLoader;
 import java.awt.Color;
@@ -48,30 +49,7 @@ public class Main extends JFrame implements KeyListener {
     public Main() {
         initProperties();
         initComponents();
-        pruebas();
-    }
-
-    private void pruebas() {
-        Tank t1 = new Tank(
-                0,
-                0,
-                3,
-                BufferedImageLoader.getInstance()
-                        .getBufferMap().get("tanque_amarillo"),
-                null,
-                null
-        );
-        Tank t2 = new Tank(
-                64,
-                64,
-                3,
-                BufferedImageLoader.getInstance()
-                        .getBufferMap().get("tanque_milka"),
-                null,
-                null
-        );
-        viewer.getSc().getItems().add(t1);
-        viewer.getSc().getItems().add(t2);
+        initServer();
     }
 
     private void initProperties() {
@@ -145,6 +123,11 @@ public class Main extends JFrame implements KeyListener {
         sl.putConstraint(SpringLayout.WEST, viewer, 0, SpringLayout.WEST, mainPanel);
 
         mainPanel.add(viewer, sl);
+    }
+
+    private void initServer(){
+        GameServerSocket gss = new GameServerSocket(2020, viewer);
+        gss.start();
     }
 
     static { // Needed to play sound in background (eg. explosions)
