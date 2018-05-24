@@ -13,13 +13,17 @@ import java.awt.image.BufferedImage;
 public class Tank extends Item {
 
     private ClientSocket cs;
-    private int speedInPxSecond;
     private int maxSpeed;
     private int acceleration;
     private int deceleration;
+    private int repainting;
 
     public Tank(BufferedImage imagenPath, ClientSocket cs) {
         super(imagenPath);
+        maxSpeed = 3;
+        acceleration = 1;
+        deceleration = 1;
+        repainting = 0;
         this.cs = cs;
     }
 
@@ -39,13 +43,13 @@ public class Tank extends Item {
     }
 
     @Override
-    public synchronized void setSpeedX(float speedX) {
+    public synchronized void setSpeedX(int speedX) {
         super.setSpeedY(0);
         super.setSpeedX(speedX);
     }
 
     @Override
-    public synchronized void setSpeedY(float speedY) {
+    public synchronized void setSpeedY(int speedY) {
         super.setSpeedX(0);
         super.setSpeedY(speedY);
     }
@@ -68,17 +72,7 @@ public class Tank extends Item {
                 this.explode();
                 break;
             case MOVE:
-                this.updateAll();
-                break;
-            case SLOWDOWN:
-                //reduce speed
-                if (super.getSpeedX() > 0) {
-                    float f = (float) (super.getSpeedX() * Math.random() * (0.75 - 0.25));
-                    this.setSpeedX(f);
-                } else {
-                    float f = (float) (super.getSpeedY() * Math.random() * (0.75 - 0.25));
-                    this.setSpeedY(f);
-                }
+                this.move();
                 break;
             case TAKEDMG:
                 super.setLife(super.getLife() - 1);
@@ -127,35 +121,41 @@ public class Tank extends Item {
 
     @Override
     public synchronized void takeDmg() {
-        
-        super.setLife(super.getLife()-1);
-    }
 
-    public void updateAll() {
-
+        super.setLife(super.getLife() - 1);
     }
 
     private synchronized void updatePosition(float elapsedSeconds) {
 
         super.setAxisX(super.getNewX());
         super.setAxisY(super.getNewY());
-        super.setSpeedX(0);
-        super.setSpeedY(0);
+        this.repainting++;
+        if (this.repainting > 2) {
+            super.setSpeedX(super.getSpeedX() - this.deceleration);
+            super.setSpeedY(super.getSpeedY() - this.deceleration);
+        }
+        if (super.getSpeedX() == 0 && super.getSpeedY() == 0) {
+            this.repainting = 0;
+        }
+
+    }
+    
+    
+    public ClientSocket getClientSocket(){
+        return this.cs;
     }
 
     //---------------------------NOTIFICATIONS--------------------------------->
-
-    public void youLose(){
-        this.cs.youLose();        
+    public void youLose() {
+        this.cs.youLose();
     }
 
-    public void youWin(){
+    public void youWin() {
         this.cs.youWin();
     }
 
-    public void youTakeDmg(){
+    public void youTakeDmg() {
         this.cs.youTakeDmg();
-    }    
-
+    }
 
 }

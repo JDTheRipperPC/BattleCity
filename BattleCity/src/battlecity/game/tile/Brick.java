@@ -14,6 +14,8 @@ import javafx.scene.media.MediaPlayer;
  */
 public class Brick extends Tile {
 
+    private int life;
+
     public Brick() {
         super.setBi(BufferedImageLoader
                 .getInstance()
@@ -33,6 +35,18 @@ public class Brick extends Tile {
                 super.getCoordinateX(),
                 super.getCoordinateY(),
                 null);
-    }    
+    }
+
+    public int getLife() {
+        return life;
+    }
+
+    public void setLife(int life) {
+        this.life = life;
+    }
+
+    public void getDmg() {
+        this.life--;
+    }
 
 }
