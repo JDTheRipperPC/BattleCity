@@ -1,6 +1,5 @@
 package battlecity;
 
-import battlecity.game.items.Tank;
 import battlecity.gui.Viewer;
 import battlecity.socket.GameServerSocket;
 import battlecity.util.AudioPlayer;
@@ -10,26 +9,13 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.embed.swing.JFXPanel;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
-import sun.audio.AudioStream;
 
 /**
  *
@@ -123,6 +109,9 @@ public class Main extends JFrame implements KeyListener {
         sl.putConstraint(SpringLayout.WEST, viewer, 0, SpringLayout.WEST, mainPanel);
 
         mainPanel.add(viewer, sl);
+        
+        /**/
+        viewer.getSc().load();
     }
 
     private void initServer(){
