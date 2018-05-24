@@ -13,6 +13,10 @@ import java.awt.image.BufferedImage;
 public class Tank extends Item {
 
     private ClientSocket cs;
+    private int speedInPxSecond;
+    private int maxSpeed;
+    private int acceleration;
+    private int deceleration;
 
     public Tank(BufferedImage imagenPath, ClientSocket cs) {
         super(imagenPath);
@@ -67,7 +71,7 @@ public class Tank extends Item {
                 this.updateAll();
                 break;
             case SLOWDOWN:
-                //reduce speed 
+                //reduce speed
                 if (super.getSpeedX() > 0) {
                     float f = (float) (super.getSpeedX() * Math.random() * (0.75 - 0.25));
                     this.setSpeedX(f);
@@ -78,10 +82,12 @@ public class Tank extends Item {
                 break;
             case TAKEDMG:
                 super.setLife(super.getLife() - 1);
+                if (super.getLife() == 0) {
+                    this.explode();
+                }
                 break;
             case BLOCKED:
-                super.setSpeedX(0);
-                super.setSpeedY(0);
+                this.colide();
                 break;
         }
     }
@@ -89,30 +95,7 @@ public class Tank extends Item {
     //---------------------------- Interface ---------------------------------->
     @Override
     public void move() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void explode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void doNoise() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void colide() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void takeDmg() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public void updateAll() {
+        // TODO : add aceleration
         float elapsedSeconds;
         long elapsedNanos;
         long now;
@@ -129,6 +112,25 @@ public class Tank extends Item {
         super.setNewY(super.getAxisY() + (int) (elapsedSeconds * super.getSpeedY()));
 
         this.updatePosition(elapsedSeconds);
+    }
+
+    @Override
+    public void explode() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void colide() {
+        super.setSpeedX(0);
+        super.setSpeedY(0);
+    }
+
+    @Override
+    public void takeDmg() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void updateAll() {
 
     }
 

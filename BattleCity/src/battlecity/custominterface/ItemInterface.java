@@ -14,7 +14,7 @@ public interface ItemInterface {
   
     public void move();
     public void explode();  
-    public void doNoise();  
+    //public void doNoise();  
     public void colide();
     public void takeDmg();
 
