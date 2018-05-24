@@ -126,8 +126,9 @@ public class Tank extends Item {
     }
 
     @Override
-    public void takeDmg() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public synchronized void takeDmg() {
+        
+        super.setLife(super.getLife()-1);
     }
 
     public void updateAll() {
@@ -141,5 +142,20 @@ public class Tank extends Item {
         super.setSpeedX(0);
         super.setSpeedY(0);
     }
+
+    //---------------------------NOTIFICATIONS--------------------------------->
+
+    public void youLose(){
+        this.cs.youLose();        
+    }
+
+    public void youWin(){
+        this.cs.youWin();
+    }
+
+    public void youTakeDmg(){
+        this.cs.youTakeDmg();
+    }    
+
 
 }

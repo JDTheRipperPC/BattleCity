@@ -93,6 +93,20 @@ public class Viewer extends Canvas implements Runnable {
         return true;
     }
 
+    //---------------------------NOTIFICATIONS--------------------------------->
+
+    public void youLose(Tank t){
+        t.youLose();
+    }
+
+    public void youWin(Tank t){
+        t.youWin();
+    }
+
+    public void youTakeDmg(Tank t){
+        t.youTakeDmg();
+    }
+
     //---------------------------COLLISIONS------------------------------------>
     public boolean checkCollision(Item i) {
 
