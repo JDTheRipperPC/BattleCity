@@ -51,7 +51,7 @@ public class Viewer extends Canvas implements Runnable {
         clients = new ArrayList<>();
     }
 
-    public ArrayList<ClientSocket> getClients() {
+    public synchronized ArrayList<ClientSocket> getClients() {
         return clients;
     }
 
@@ -73,6 +73,14 @@ public class Viewer extends Canvas implements Runnable {
 
     public void setSc(Scene sc) {
         this.sc = sc;
+    }
+
+    public String[] getTankImgPath() {
+        return tankImgPath;
+    }
+
+    public void setTankImgPath(String[] tankImgPath) {
+        this.tankImgPath = tankImgPath;
     }
 
     @Override
@@ -97,7 +105,6 @@ public class Viewer extends Canvas implements Runnable {
     }
 
     public synchronized void paint() {
-        System.out.println("paint");
         BufferStrategy bs;
         bs = getBufferStrategy();
         if (bs == null) {
