@@ -1,8 +1,8 @@
 package battlecity.game.items;
 
-import battlecity.custominterface.ItemInterface;
 import battlecity.game.Item;
 import battlecity.gui.Viewer;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.scene.media.Media;
@@ -95,6 +95,11 @@ public class Bullet extends Item {
             MediaPlayer mp = new MediaPlayer(m);
             mp.play();
         }).start();
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        g.drawImage(getImagenPath(), getAxisX(), getAxisY(), null);
     }
 
 }
