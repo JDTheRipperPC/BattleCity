@@ -1,6 +1,6 @@
 package battlecity.game;
 
-import battlecity.gui.Viewer;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 /**
@@ -36,6 +36,8 @@ public abstract class Tile {
         this.coordinateY = coordinateY;
     }
 
-    public abstract void paint(Viewer v);
+    public void paint(Graphics g){
+        g.drawImage(bi, coordinateX, coordinateY, null);
+    }
 
 }

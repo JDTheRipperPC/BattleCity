@@ -1,9 +1,9 @@
 package battlecity.game.items;
 
-import battlecity.custominterface.ItemInterface;
 import battlecity.game.Item;
 import battlecity.gui.Viewer;
 import battlecity.socket.ClientSocket;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 /**
@@ -138,6 +138,11 @@ public class Tank extends Item {
         super.setAxisY(super.getNewY());
         super.setSpeedX(0);
         super.setSpeedY(0);
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        g.drawImage(getImagenPath(), getAxisX(), getAxisY(), null);
     }
 
 }

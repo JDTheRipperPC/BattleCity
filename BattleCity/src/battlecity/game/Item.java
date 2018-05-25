@@ -2,7 +2,6 @@ package battlecity.game;
 
 import battlecity.custominterface.ItemInterface;
 import battlecity.gui.Viewer;
-import battlecity.socket.ClientSocket;
 import java.awt.image.BufferedImage;
 
 /**
@@ -31,7 +30,7 @@ public abstract class Item implements Runnable, ItemInterface {
     @Override
     public String toString() {
         String imgNull = imagenPath == null ? "Null" : "Not null";
-        return "Position: {" + axisX + ", " + axisY + "}\nBufferedImage is? " + imagenPath;
+        return "Position: {" + axisX + ", " + axisY + "}\nBufferedImage is? " + imgNull;
     }
 
     /**

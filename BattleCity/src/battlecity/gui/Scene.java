@@ -8,10 +8,8 @@ import battlecity.game.tile.Metal;
 import battlecity.game.tile.Water;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -55,7 +53,7 @@ public class Scene {
                             Grass g = new Grass();
                             g.setCoordinateX(x * 32);
                             g.setCoordinateY(y * 32);
-                            //tiles.add(g);
+                            tiles.add(g);
                             break;
                         case "M":
                             Metal m = new Metal();

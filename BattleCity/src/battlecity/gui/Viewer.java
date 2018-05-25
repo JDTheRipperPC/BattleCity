@@ -8,10 +8,9 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -86,43 +85,48 @@ public class Viewer extends Canvas implements Runnable {
             sc.getItems().get(i).setImagenPath(BufferedImageLoader.getInstance().getBufferMap().get(tankImgPath[i]));
             System.out.println(sc.getItems().get(i));
         }
-        System.out.println("---");
-        System.out.println("game start");
-        System.out.println("---");
-        System.out.println(getSize().width);
-        System.out.println(getSize().height);
-
+        createBufferStrategy(2);
         while (game) {
+            paint();
             try {
-                paintAll();
-                Thread.sleep(15);
+                Thread.sleep(7);
             } catch (InterruptedException ex) {
-                Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         System.out.println("game end");
     }
 
-    public void paint() {
-        paint(getGraphics());
-    }
-
-    public void paintAll() {
-        paintAll(getGraphics());
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        if (g == null) {
-            System.err.println("Graphics null in paint");
+    public synchronized void paint() {
+        System.out.println("paint");
+        BufferStrategy bs;
+        bs = getBufferStrategy();
+        if (bs == null) {
+            System.err.println("bs is null");
             return;
         }
-        for (Item i : sc.getItems()) {
-            g.drawImage(i.getImagenPath(), i.getAxisX(), i.getAxisY(), null);
+        Graphics g = bs.getDrawGraphics();
+        paintItems(g);
+        paintTiles(g);
+        bs.show();
+        g.dispose();
+    }
+
+    private synchronized void paintItems(Graphics g) {
+        if (sc.getItems() == null || sc.getItems().isEmpty()) {
+            return;
         }
-        for (Tile t : sc.getTiles()) {
-            g.drawImage(t.getBi(), t.getCoordinateX(), t.getCoordinateY(), null);
+        sc.getItems().forEach((i) -> {
+            i.paint(g);
+        });
+    }
+
+    private synchronized void paintTiles(Graphics g) {
+        if (sc.getTiles() == null || sc.getTiles().isEmpty()){
+            return;
         }
+        sc.getTiles().forEach((t) -> {
+            t.paint(g);
+        });
     }
 
     @Override
