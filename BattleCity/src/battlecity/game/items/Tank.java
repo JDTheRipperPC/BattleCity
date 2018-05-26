@@ -57,17 +57,20 @@ public class Tank extends Item {
      */
     public void shoot() {
         BufferedImage bllet = null;
-        //Bullet b = new Bullet(this.getAxisX(), this.getAxisY(), 1, bllet, super.getOrientation(), this.getViewer());
-        //new Thread(b).start();
+        Bullet b = new Bullet(bllet, super.getOrientation(), super.getViewer());
+        new Thread(b).start();
     }
 
     //------------------------------------------------------------------------->
-    private void evaluate(Viewer.AllowedAction a) {
+    @Override
+    public void evaluate(Viewer.AllowedAction a) {
         switch (a) {
             case EXPLODE:
+                System.out.println("Explode");
                 this.explode();
                 break;
             case MOVE:
+                System.out.println("Move");
                 this.move();
                 break;
             case TAKEDMG:
@@ -77,6 +80,7 @@ public class Tank extends Item {
                 }
                 break;
             case BLOCKED:
+                System.out.println("Blocked");
                 this.colide();
                 break;
         }
@@ -100,7 +104,7 @@ public class Tank extends Item {
 
         super.setNewX(super.getAxisX() + (int) (elapsedSeconds * super.getSpeedX()));
         super.setNewY(super.getAxisY() + (int) (elapsedSeconds * super.getSpeedY()));
-
+        System.out.println("Updated");
         this.updatePosition(elapsedSeconds);
     }
 
@@ -147,7 +151,7 @@ public class Tank extends Item {
 
     @Override
     public void paint(Graphics g) {
-        g.drawImage(getImagenPath(), getAxisX(), getAxisY(), null);
+        g.drawImage(getImagenPath(), super.getAxisX(), super.getAxisY(), null);
     }
 
 }

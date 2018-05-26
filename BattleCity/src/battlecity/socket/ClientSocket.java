@@ -66,7 +66,7 @@ public class ClientSocket extends Thread {
     public void run() {
         String msg;
         System.out.println(this);
-        while (tank.getLife() > 0 && viewer.isGame()) {
+        while (tank.getLife() > 0) {
             try {
                 msg = br.readLine();
                 evaluateMessage(msg);
@@ -79,9 +79,11 @@ public class ClientSocket extends Thread {
     private void evaluateMessage(String msg) {
         switch (msg) {
             case "up":
+                System.out.println("up");
                 this.goUp();
                 break;
             case "down":
+                System.out.println("down");
                 this.goDown();
                 break;
             case "left":

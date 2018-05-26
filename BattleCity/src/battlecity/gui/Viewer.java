@@ -94,7 +94,7 @@ public class Viewer extends Canvas implements Runnable {
 
     @Override
     public void run() {
-        this.game = true
+        this.game = true;
         System.out.println("---");
         for (int i = 0; i < clients.size(); i++) {
             sc.getItems().get(i).setAxisX(sc.getTankPoint()[i].x * 32);
@@ -103,8 +103,11 @@ public class Viewer extends Canvas implements Runnable {
             System.out.println(sc.getItems().get(i));
         }
         createBufferStrategy(2);
-        while (game) {
+        while (game && !checkWinner()) {
             paint();
+            for(Item i : this.sc.getItems()){
+                i.evaluate(this.itemCanDo(i));
+            }
             try {
                 Thread.sleep(7);
             } catch (InterruptedException ex) {
@@ -137,7 +140,7 @@ public class Viewer extends Canvas implements Runnable {
     }
 
     private synchronized void paintTiles(Graphics g) {
-        if (sc.getTiles() == null || sc.getTiles().isEmpty()){
+        if (sc.getTiles() == null || sc.getTiles().isEmpty()) {
             return;
         }
         sc.getTiles().forEach((t) -> {
@@ -193,9 +196,11 @@ public class Viewer extends Canvas implements Runnable {
 
         //following if's check if collides with walls
         if (i.getNewX() > this.dim.width) {
+            System.out.println(dim.width);
             return true;
         }
         if (i.getNewY() > this.dim.height) {
+            System.out.println(dim.height);
             return true;
         }
         //following if's check if collides with items or tiles

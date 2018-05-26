@@ -54,6 +54,7 @@ public class Bullet extends Item {
     }
 
     //------------------------------------------------------------------------->
+    @Override
     public void evaluate(Viewer.AllowedAction a) {
         switch (a) {
             case MOVE:

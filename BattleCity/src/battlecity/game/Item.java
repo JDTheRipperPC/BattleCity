@@ -172,4 +172,6 @@ public abstract class Item implements Runnable, ItemInterface {
     }
 
     //---------------------- Publics -------------------------------------------    
+    
+    public void evaluate(Viewer.AllowedAction a){}
 }
