@@ -1,8 +1,8 @@
 package battlecity.game.items;
 
-import battlecity.custominterface.ItemInterface;
 import battlecity.game.Item;
 import battlecity.gui.Viewer;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.scene.media.Media;
@@ -108,6 +108,11 @@ public class Bullet extends Item {
     private synchronized void updatePosition(float elapsedSeconds) {
         super.setAxisX(super.getNewX());
         super.setAxisY(super.getNewY());
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        g.drawImage(getImagenPath(), getAxisX(), getAxisY(), null);
     }
 
 }

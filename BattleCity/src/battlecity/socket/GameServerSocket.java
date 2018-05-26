@@ -41,7 +41,10 @@ public class GameServerSocket extends Thread {
                 in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 if (in.readLine().equals("$Player") && viewer.getClients().size() < 4) {
                     System.out.println("msg ok");
-                    viewer.getClients().add(new ClientSocket(client, viewer));
+                    ClientSocket cs = new ClientSocket(client, viewer);
+                    viewer.getClients().add(cs);
+                    cs.getTank().setLife(3);
+                    cs.start();
                 } else {
                     System.err.println("Message not '$Player'");
                     BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));

@@ -21,10 +21,10 @@ public class ClientSocket extends Thread {
     private Tank tank;
 
     private Socket client;
-    
+
     private BufferedReader br;
     private BufferedWriter bw;
-    
+
     private Viewer viewer;
 
     public ClientSocket(Socket client, Viewer v) throws IOException {
@@ -38,13 +38,35 @@ public class ClientSocket extends Thread {
         System.out.println("Nuevo ClientSocket");
         this.tank = new Tank(null, this);
         this.viewer.getSc().getItems().add(tank);
-                
+
+    }
+
+    public Tank getTank() {
+        return tank;
+    }
+
+    public void setTank(Tank tank) {
+        this.tank = tank;
+    }
+
+    public Socket getClient() {
+        return client;
+    }
+
+    public void setClient(Socket client) {
+        this.client = client;
+    }
+
+    @Override
+    public String toString() {
+        return "Life: " + tank.getLife();
     }
 
     @Override
     public void run() {
         String msg;
-        while (tank.getLife() > 0 && viewer.isGame()) { // FIXME: add condition GAME RUNNING
+        System.out.println(this);
+        while (tank.getLife() > 0 && viewer.isGame()) {
             try {
                 msg = br.readLine();
                 evaluateMessage(msg);
@@ -53,9 +75,9 @@ public class ClientSocket extends Thread {
             }
         }
     }
-    
-    private void evaluateMessage(String msg){
-        switch(msg){
+
+    private void evaluateMessage(String msg) {
+        switch (msg) {
             case "up":
                 this.goUp();
                 break;
@@ -73,10 +95,12 @@ public class ClientSocket extends Thread {
                 break;
         }
     }
-    
-    public void sendMessage(String msg){
+
+    public void sendMessage(String msg) {
         try {
             bw.write(msg);
+            bw.newLine();
+            bw.flush();
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
