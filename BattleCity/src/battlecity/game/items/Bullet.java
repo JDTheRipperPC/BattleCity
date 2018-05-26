@@ -14,15 +14,17 @@ import javafx.scene.media.MediaPlayer;
  */
 public class Bullet extends Item {
 
+    private int x, y;
+
     public Bullet(BufferedImage imagenPath, Orientation o, Viewer vw) {
         super(imagenPath);
         super.setViewer(vw);
 
-        int x = o.getAxisX();
-        int y = o.getAxisY();
+        this.x = o.getAxisX();
+        this.y = o.getAxisY();
 
-        this.setSpeedX(x);
-        this.setSpeedY(y);
+        this.setSpeedX(this.x);
+        this.setSpeedY(this.y);
 
     }
 
@@ -42,13 +44,13 @@ public class Bullet extends Item {
 
     //-------------------- Custom Speed --------------------------------------->
     @Override
-    public synchronized void setSpeedX(int x) {
-        super.setSpeedX(x * 5);
+    public synchronized void setSpeedX(float x) {
+        super.setSpeedX(x * 2);
     }
 
     @Override
-    public synchronized void setSpeedY(int y) {
-        super.setSpeedY(y * 5);
+    public synchronized void setSpeedY(float y) {
+        super.setSpeedY(y * 2);
     }
 
     //------------------------------------------------------------------------->

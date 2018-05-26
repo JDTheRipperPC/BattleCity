@@ -1,5 +1,6 @@
 package battlecity.socket;
 
+import battlecity.game.Item;
 import battlecity.game.items.Tank;
 import battlecity.gui.Viewer;
 import java.io.BufferedReader;
@@ -56,14 +57,19 @@ public class ClientSocket extends Thread {
     private void evaluateMessage(String msg){
         switch(msg){
             case "up":
+                this.goUp();
                 break;
             case "down":
+                this.goDown();
                 break;
             case "left":
+                this.goLeft();
                 break;
             case "right":
+                this.goRight();
                 break;
             case "shot":
+                this.tank.shoot();
                 break;
         }
     }
@@ -77,15 +83,35 @@ public class ClientSocket extends Thread {
     }
 
     public void youLose() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       this.sendMessage("lose");
     }
 
     public void youWin() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.sendMessage("win");
     }
 
     public void youTakeDmg() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.sendMessage("dmg");
     }
+    
+    private void goUp(){
+        this.tank.setOrientation(Item.Orientation.NORTH);
+        this.tank.setSpeedX(2);
+    }
+    
+    private void goDown(){
+        this.tank.setOrientation(Item.Orientation.SOUTH);
+        this.tank.setSpeedX(2);
+    }
+    
+    private void goLeft(){
+        this.tank.setOrientation(Item.Orientation.WEST);
+        this.tank.setSpeedY(2);
+    }
+    private void goRight(){
+        this.tank.setOrientation(Item.Orientation.EAST);
+        this.tank.setSpeedY(2);
+    }
+    
 
 }

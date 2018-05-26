@@ -13,17 +13,13 @@ import java.awt.image.BufferedImage;
 public class Tank extends Item {
 
     private ClientSocket cs;
-    private int maxSpeed;
-    private int acceleration;
-    private int deceleration;
-    private int repainting;
+    private float maxSpeed;
+    private float deceleration;
 
     public Tank(BufferedImage imagenPath, ClientSocket cs) {
         super(imagenPath);
         maxSpeed = 3;
-        acceleration = 1;
-        deceleration = 1;
-        repainting = 0;
+        deceleration = (float) 0.25;
         this.cs = cs;
     }
 
@@ -43,15 +39,15 @@ public class Tank extends Item {
     }
 
     @Override
-    public synchronized void setSpeedX(int speedX) {
+    public synchronized void setSpeedX(float speedX) {
         super.setSpeedY(0);
-        super.setSpeedX(speedX);
+        super.setSpeedX(speedX * super.getOrientation().getAxisX());
     }
 
     @Override
-    public synchronized void setSpeedY(int speedY) {
+    public synchronized void setSpeedY(float speedY) {
         super.setSpeedX(0);
-        super.setSpeedY(speedY);
+        super.setSpeedY(speedY * super.getOrientation().getAxisY());
     }
 
     // this class methods :
@@ -126,22 +122,13 @@ public class Tank extends Item {
     }
 
     private synchronized void updatePosition(float elapsedSeconds) {
-
         super.setAxisX(super.getNewX());
         super.setAxisY(super.getNewY());
-        this.repainting++;
-        if (this.repainting > 2) {
-            super.setSpeedX(super.getSpeedX() - this.deceleration);
-            super.setSpeedY(super.getSpeedY() - this.deceleration);
-        }
-        if (super.getSpeedX() == 0 && super.getSpeedY() == 0) {
-            this.repainting = 0;
-        }
-
+        super.setSpeedX(super.getSpeedX() - this.deceleration);
+        super.setSpeedY(super.getSpeedY() - this.deceleration);
     }
-    
-    
-    public ClientSocket getClientSocket(){
+
+    public ClientSocket getClientSocket() {
         return this.cs;
     }
 

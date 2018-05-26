@@ -54,7 +54,7 @@ public class Viewer extends Canvas implements Runnable {
     public synchronized void removeClient(ClientSocket c) {
         this.clients.remove(c);
         if (this.checkWinner()) {
-           this.clients.get(1).youWin();
+            this.clients.get(0).youWin();
         }
     }
 
@@ -81,8 +81,8 @@ public class Viewer extends Canvas implements Runnable {
     @Override
     public void run() {
         this.game = true;
-        while (game) {
-
+        while (game && !checkWinner()) {
+            
         }
 
     }
@@ -144,6 +144,9 @@ public class Viewer extends Canvas implements Runnable {
                             && x.getClass().getSimpleName().equals("Brick")) {
                         Brick b = (Brick) x;
                         b.getDmg();
+                        if (b.getLife() == 0) {
+                            t.remove(b);
+                        }
                     }
                     return true;
                 }
@@ -161,6 +164,7 @@ public class Viewer extends Canvas implements Runnable {
                         x.takeDmg();
                         if (x.getLife() == 0 && x.getClass().getSimpleName().equals("Tank")) {
                             Tank t = (Tank) x;
+                            allItems.remove(t);
                             this.removeClient(t.getClientSocket());
                         }
                         return true;
