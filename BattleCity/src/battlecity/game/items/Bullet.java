@@ -14,87 +14,100 @@ import javafx.scene.media.MediaPlayer;
  */
 public class Bullet extends Item {
 
+    private int x, y;
+
     public Bullet(BufferedImage imagenPath, Orientation o, Viewer vw) {
         super(imagenPath);
         super.setViewer(vw);
 
-        float x = o.getAxisX();
-        float y = o.getAxisY();
+        this.x = o.getAxisX();
+        this.y = o.getAxisY();
 
-        this.setSpeedX(x);
-        this.setSpeedY(y);
+        this.setSpeedX(this.x);
+        this.setSpeedY(this.y);
 
+    }
+
+    @Override
+    public void run() {
+        super.setLastUpdateTime(System.nanoTime());
+        while (super.getLife() == 0 && super.getViewer().isGame()) {
+            try {
+                Thread.sleep(1000 / 140);
+            } catch (InterruptedException ex) {
+
+            }
+            this.evaluate(super.getViewer().itemCanDo(this));
+
+        }
     }
 
     //-------------------- Custom Speed --------------------------------------->
     @Override
     public synchronized void setSpeedX(float x) {
-        super.setSpeedX(x * 4);
+        super.setSpeedX(x * 2);
     }
 
     @Override
     public synchronized void setSpeedY(float y) {
-        super.setSpeedY(y * 4);
+        super.setSpeedY(y * 2);
     }
 
     //------------------------------------------------------------------------->
     public void evaluate(Viewer.AllowedAction a) {
         switch (a) {
-            case EXPLODE:
-                this.explode();
-                break;
             case MOVE:
                 this.move();
                 break;
-            case SLOWDOWN:
-                //nothing for bullet
-                this.move();
+            default:
+                this.explode();
                 break;
-            case TAKEDMG:
-                super.setLife(super.getLife() - 1);
-                break;
-
         }
     }
 
     //---------------------------- Interface ---------------------------------->
     @Override
-    public void run() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void move() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        float elapsedSeconds;
+        long elapsedNanos;
+        long now;
+
+        if (super.getLife() == 0) {
+            return;
+        }
+        now = System.nanoTime();
+        elapsedNanos = now - super.getLastUpdateTime();
+        super.setLastUpdateTime(now);
+        elapsedSeconds = ((float) (elapsedNanos)) / 1000000000.0f;
+
+        super.setNewX(super.getAxisX() + (int) (elapsedSeconds * super.getSpeedX()));
+        super.setNewY(super.getAxisY() + (int) (elapsedSeconds * super.getSpeedY()));
+
+        this.updatePosition(elapsedSeconds);
     }
 
     @Override
     public void explode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void doNoise() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void colide() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void takeDmg() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    // Sound    
-    public void explosion() {
         new Thread(() -> {
             Media m = new Media(new File("res/audio/explosion.wav").toURI().toString());
             MediaPlayer mp = new MediaPlayer(m);
             mp.play();
         }).start();
+    }
+
+    @Override
+    public void colide() {
+        super.setLife(0);
+    }
+
+    @Override
+    public void takeDmg() {
+        super.setLife(0);
+    }
+
+    private synchronized void updatePosition(float elapsedSeconds) {
+        super.setAxisX(super.getNewX());
+        super.setAxisY(super.getNewY());
     }
 
     @Override

@@ -13,9 +13,13 @@ import java.awt.image.BufferedImage;
 public class Tank extends Item {
 
     private ClientSocket cs;
+    private float maxSpeed;
+    private float deceleration;
 
     public Tank(BufferedImage imagenPath, ClientSocket cs) {
         super(imagenPath);
+        maxSpeed = 3;
+        deceleration = (float) 0.25;
         this.cs = cs;
     }
 
@@ -37,13 +41,13 @@ public class Tank extends Item {
     @Override
     public synchronized void setSpeedX(float speedX) {
         super.setSpeedY(0);
-        super.setSpeedX(speedX);
+        super.setSpeedX(speedX * super.getOrientation().getAxisX());
     }
 
     @Override
     public synchronized void setSpeedY(float speedY) {
         super.setSpeedX(0);
-        super.setSpeedY(speedY);
+        super.setSpeedY(speedY * super.getOrientation().getAxisY());
     }
 
     // this class methods :
@@ -64,24 +68,16 @@ public class Tank extends Item {
                 this.explode();
                 break;
             case MOVE:
-                this.updateAll();
-                break;
-            case SLOWDOWN:
-                //reduce speed 
-                if (super.getSpeedX() > 0) {
-                    float f = (float) (super.getSpeedX() * Math.random() * (0.75 - 0.25));
-                    this.setSpeedX(f);
-                } else {
-                    float f = (float) (super.getSpeedY() * Math.random() * (0.75 - 0.25));
-                    this.setSpeedY(f);
-                }
+                this.move();
                 break;
             case TAKEDMG:
                 super.setLife(super.getLife() - 1);
+                if (super.getLife() == 0) {
+                    this.explode();
+                }
                 break;
             case BLOCKED:
-                super.setSpeedX(0);
-                super.setSpeedY(0);
+                this.colide();
                 break;
         }
     }
@@ -89,30 +85,7 @@ public class Tank extends Item {
     //---------------------------- Interface ---------------------------------->
     @Override
     public void move() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void explode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void doNoise() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void colide() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void takeDmg() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public void updateAll() {
+        // TODO : add aceleration
         float elapsedSeconds;
         long elapsedNanos;
         long now;
@@ -129,15 +102,47 @@ public class Tank extends Item {
         super.setNewY(super.getAxisY() + (int) (elapsedSeconds * super.getSpeedY()));
 
         this.updatePosition(elapsedSeconds);
+    }
 
+    @Override
+    public void explode() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void colide() {
+        super.setSpeedX(0);
+        super.setSpeedY(0);
+    }
+
+    @Override
+    public synchronized void takeDmg() {
+
+        super.setLife(super.getLife() - 1);
     }
 
     private synchronized void updatePosition(float elapsedSeconds) {
-
         super.setAxisX(super.getNewX());
         super.setAxisY(super.getNewY());
-        super.setSpeedX(0);
-        super.setSpeedY(0);
+        super.setSpeedX(super.getSpeedX() - this.deceleration);
+        super.setSpeedY(super.getSpeedY() - this.deceleration);
+    }
+
+    public ClientSocket getClientSocket() {
+        return this.cs;
+    }
+
+    //---------------------------NOTIFICATIONS--------------------------------->
+    public void youLose() {
+        this.cs.youLose();
+    }
+
+    public void youWin() {
+        this.cs.youWin();
+    }
+
+    public void youTakeDmg() {
+        this.cs.youTakeDmg();
     }
 
     @Override

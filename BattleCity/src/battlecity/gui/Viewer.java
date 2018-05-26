@@ -4,6 +4,8 @@ import battlecity.socket.ClientSocket;
 import battlecity.game.Item;
 import battlecity.game.Tile;
 import battlecity.util.BufferedImageLoader;
+import battlecity.game.items.Tank;
+import battlecity.game.tile.Brick;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -25,7 +27,7 @@ public class Viewer extends Canvas implements Runnable {
     private String[] tankImgPath = new String[]{"tanque_amarillo", "tanque_milka", "tanque_rojo", "tanque_verde"};
 
     public static enum AllowedAction {
-        MOVE, TAKEDMG, SLOWDOWN, EXPLODE, BLOCKED;
+        MOVE, TAKEDMG, EXPLODE, BLOCKED;
     }
 
     private ArrayList<ClientSocket> clients;
@@ -53,6 +55,13 @@ public class Viewer extends Canvas implements Runnable {
 
     public synchronized ArrayList<ClientSocket> getClients() {
         return clients;
+    }
+
+    public synchronized void removeClient(ClientSocket c) {
+        this.clients.remove(c);
+        if (this.checkWinner()) {
+            this.clients.get(0).youWin();
+        }
     }
 
     public boolean isGame() {
@@ -85,7 +94,7 @@ public class Viewer extends Canvas implements Runnable {
 
     @Override
     public void run() {
-        this.game = true;
+        this.game = true
         System.out.println("---");
         for (int i = 0; i < clients.size(); i++) {
             sc.getItems().get(i).setAxisX(sc.getTankPoint()[i].x * 32);
@@ -153,6 +162,10 @@ public class Viewer extends Canvas implements Runnable {
         }
     }
 
+    public synchronized boolean checkWinner() {
+        return this.clients.size() == 1;
+    }
+
     public AllowedAction itemCanDo(Item i) {
         if (checkCollision(i)) {
             return AllowedAction.BLOCKED;
@@ -162,10 +175,17 @@ public class Viewer extends Canvas implements Runnable {
 
     }
 
-    public boolean checkSlow(Item i) {
-        i.getAxisX();
-        i.getAxisY();
-        return true;
+    //---------------------------NOTIFICATIONS--------------------------------->
+    public void youLose(Tank t) {
+        t.youLose();
+    }
+
+    public void youWin(Tank t) {
+        t.youWin();
+    }
+
+    public void youTakeDmg(Tank t) {
+        t.youTakeDmg();
     }
 
     //---------------------------COLLISIONS------------------------------------>
@@ -195,7 +215,14 @@ public class Viewer extends Canvas implements Runnable {
                         || x.getCoordinateY() + j == i.getNewY())
                         && !x.getClass().getSimpleName().equals("Grass")
                         || !x.getClass().getSimpleName().equals("Water")) {
-
+                    if (i.getClass().getSimpleName().equals("Bullet")
+                            && x.getClass().getSimpleName().equals("Brick")) {
+                        Brick b = (Brick) x;
+                        b.getDmg();
+                        if (b.getLife() == 0) {
+                            t.remove(b);
+                        }
+                    }
                     return true;
                 }
             }
@@ -210,6 +237,11 @@ public class Viewer extends Canvas implements Runnable {
                     if ((x.getAxisX() + j == i.getNewX()
                             || x.getAxisY() + j == i.getNewY())) {
                         x.takeDmg();
+                        if (x.getLife() == 0 && x.getClass().getSimpleName().equals("Tank")) {
+                            Tank t = (Tank) x;
+                            allItems.remove(t);
+                            this.removeClient(t.getClientSocket());
+                        }
                         return true;
                     }
                 }
