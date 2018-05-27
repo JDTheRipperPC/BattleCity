@@ -36,8 +36,13 @@ public abstract class Tile {
         this.coordinateY = coordinateY;
     }
 
-    public void paint(Graphics g){
+    public void paint(Graphics g) {
         g.drawImage(bi, coordinateX, coordinateY, null);
+    }
+
+    @Override
+    public String toString() {
+        return "" + this.coordinateX + " " + this.coordinateY;
     }
 
 }

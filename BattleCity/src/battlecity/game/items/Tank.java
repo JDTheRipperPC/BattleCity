@@ -21,7 +21,7 @@ public class Tank extends Item {
         super(imagenPath);
         aceleration = 1;
         deceleration = 1;
-        maxspeed = 4;
+        maxspeed = 2;
         this.cs = cs;
     }
 
@@ -33,7 +33,7 @@ public class Tank extends Item {
             try {
                 Thread.sleep(1000 / 60);
             } catch (InterruptedException ex) {
-            }            
+            }
             this.evaluate(super.getViewer().itemCanDo(this));
 
         }
@@ -103,7 +103,10 @@ public class Tank extends Item {
         }
         super.setNewX(super.getAxisX() + (int) (elapsedSeconds * super.getSpeedX()));
         super.setNewY(super.getAxisY() + (int) (elapsedSeconds * super.getSpeedY()));
-        this.updatePosition(elapsedSeconds);
+        if (super.getViewer().itemCanDo(this).equals(Viewer.AllowedAction.MOVE)) {
+
+            this.updatePosition(elapsedSeconds);
+        }
     }
 
     @Override
@@ -115,6 +118,8 @@ public class Tank extends Item {
     public void colide() {
         super.setSpeedX(0);
         super.setSpeedY(0);
+        super.setNewX(super.getAxisX());
+        super.setNewY(super.getAxisY());
     }
 
     @Override
