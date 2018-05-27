@@ -13,13 +13,15 @@ import java.awt.image.BufferedImage;
 public class Tank extends Item {
 
     private ClientSocket cs;
-    private float maxSpeed;
-    private float deceleration;
+    private int deceleration;
+    private int aceleration;
+    private int maxspeed;
 
     public Tank(BufferedImage imagenPath, ClientSocket cs) {
         super(imagenPath);
-        maxSpeed = 3;
-        deceleration = (float) 0.25;
+        aceleration = 1;
+        deceleration = 1;
+        maxspeed = 4;
         this.cs = cs;
     }
 
@@ -29,9 +31,9 @@ public class Tank extends Item {
         super.setLastUpdateTime(System.nanoTime());
         while (true) {
             try {
-                Thread.sleep(1000 / 140);
+                Thread.sleep(1000 / 60);
             } catch (InterruptedException ex) {
-            }
+            }            
             this.evaluate(super.getViewer().itemCanDo(this));
 
         }
@@ -39,15 +41,16 @@ public class Tank extends Item {
     }
 
     @Override
-    public synchronized void setSpeedX(float speedX) {
+    public synchronized void setSpeedX(int speedX) {
         super.setSpeedY(0);
-        super.setSpeedX(speedX * super.getOrientation().getAxisX());
+        super.setSpeedX(speedX);
+
     }
 
     @Override
-    public synchronized void setSpeedY(float speedY) {
+    public synchronized void setSpeedY(int speedY) {
         super.setSpeedX(0);
-        super.setSpeedY(speedY * super.getOrientation().getAxisY());
+        super.setSpeedY(speedY);
     }
 
     // this class methods :
@@ -66,11 +69,9 @@ public class Tank extends Item {
     public void evaluate(Viewer.AllowedAction a) {
         switch (a) {
             case EXPLODE:
-                System.out.println("Explode");
                 this.explode();
                 break;
             case MOVE:
-                System.out.println("Move");
                 this.move();
                 break;
             case TAKEDMG:
@@ -80,7 +81,6 @@ public class Tank extends Item {
                 }
                 break;
             case BLOCKED:
-                System.out.println("Blocked");
                 this.colide();
                 break;
         }
@@ -94,17 +94,15 @@ public class Tank extends Item {
         long elapsedNanos;
         long now;
 
-        if (super.getLife() == 0) {
-            return;
-        }
         now = System.nanoTime();
         elapsedNanos = now - super.getLastUpdateTime();
         super.setLastUpdateTime(now);
         elapsedSeconds = ((float) (elapsedNanos)) / 1000000000.0f;
-
+        if (elapsedSeconds < 1) {
+            elapsedSeconds = 1;
+        }
         super.setNewX(super.getAxisX() + (int) (elapsedSeconds * super.getSpeedX()));
         super.setNewY(super.getAxisY() + (int) (elapsedSeconds * super.getSpeedY()));
-        System.out.println("Updated");
         this.updatePosition(elapsedSeconds);
     }
 
@@ -126,10 +124,71 @@ public class Tank extends Item {
     }
 
     private synchronized void updatePosition(float elapsedSeconds) {
+
         super.setAxisX(super.getNewX());
         super.setAxisY(super.getNewY());
-        super.setSpeedX(super.getSpeedX() - this.deceleration);
-        super.setSpeedY(super.getSpeedY() - this.deceleration);
+
+        if (Math.abs(this.aceleration) == Math.abs(this.maxspeed)) {
+            if (super.getSpeedX() > 0) {
+                this.setSpeedX(super.getSpeedX() - this.deceleration);
+            }
+            if (super.getSpeedY() > 0) {
+                this.setSpeedY(super.getSpeedY() - this.deceleration);
+            }
+            if (super.getSpeedX() < 0) {
+                this.setSpeedX(super.getSpeedX() + this.deceleration);
+            }
+            if (super.getSpeedY() < 0) {
+                this.setSpeedY(super.getSpeedY() + this.deceleration);
+            }
+        } else {
+            if (super.getSpeedX() > 0) {
+                this.aceleration += super.getOrientation().getAxisX();
+                this.setSpeedX(this.aceleration);
+            }
+            if (super.getSpeedX() < 0) {
+                this.aceleration += super.getOrientation().getAxisX();
+                this.setSpeedX(this.aceleration);
+            }
+            if (super.getSpeedY() < 0) {
+                this.aceleration += super.getOrientation().getAxisY();
+                this.setSpeedY(this.aceleration);
+            }
+            if (super.getSpeedY() > 0) {
+                this.aceleration += super.getOrientation().getAxisY();
+                this.setSpeedY(this.aceleration);
+            }
+
+        }
+
+    }
+
+    public void goUp() {
+        super.setOrientation(Orientation.NORTH);
+        this.aceleration = super.getOrientation().getAxisY();
+        this.setSpeedY(this.aceleration);
+        System.out.println(this);
+    }
+
+    public void goDown() {
+        super.setOrientation(Orientation.SOUTH);
+        this.aceleration = super.getOrientation().getAxisY();
+        super.setSpeedY(this.aceleration);
+
+    }
+
+    public void goLeft() {
+        super.setOrientation(Orientation.WEST);
+        this.aceleration = super.getOrientation().getAxisX();
+        super.setSpeedX(this.aceleration);
+
+    }
+
+    public void goRight() {
+        super.setOrientation(Orientation.EAST);
+        this.aceleration = super.getOrientation().getAxisX();
+        super.setSpeedX(this.aceleration);
+
     }
 
     public ClientSocket getClientSocket() {
@@ -152,6 +211,11 @@ public class Tank extends Item {
     @Override
     public void paint(Graphics g) {
         g.drawImage(getImagenPath(), super.getAxisX(), super.getAxisY(), null);
+    }
+
+    @Override
+    public String toString() {
+        return " Coordenadas: " + super.getAxisX() + ", " + super.getAxisY() + "\n Nuevas C " + super.getNewX() + ", " + super.getNewY();
     }
 
 }

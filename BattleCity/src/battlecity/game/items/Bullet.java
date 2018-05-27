@@ -44,12 +44,12 @@ public class Bullet extends Item {
 
     //-------------------- Custom Speed --------------------------------------->
     @Override
-    public synchronized void setSpeedX(float x) {
+    public synchronized void setSpeedX(int x) {
         super.setSpeedX(x * 2);
     }
 
     @Override
-    public synchronized void setSpeedY(float y) {
+    public synchronized void setSpeedY(int y) {
         super.setSpeedY(y * 2);
     }
 

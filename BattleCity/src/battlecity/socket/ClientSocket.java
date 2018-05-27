@@ -79,18 +79,16 @@ public class ClientSocket extends Thread {
     private void evaluateMessage(String msg) {
         switch (msg) {
             case "up":
-                System.out.println("up");
-                this.goUp();
+                tank.goUp();
                 break;
             case "down":
-                System.out.println("down");
-                this.goDown();
+                tank.goDown();
                 break;
             case "left":
-                this.goLeft();
+                tank.goLeft();
                 break;
             case "right":
-                this.goRight();
+                tank.goRight();
                 break;
             case "shot":
                 this.tank.shoot();
@@ -121,22 +119,18 @@ public class ClientSocket extends Thread {
     }
     
     private void goUp(){
-        this.tank.setOrientation(Item.Orientation.NORTH);
-        this.tank.setSpeedX(2);
+        
     }
     
     private void goDown(){
-        this.tank.setOrientation(Item.Orientation.SOUTH);
-        this.tank.setSpeedX(2);
+        
     }
     
     private void goLeft(){
-        this.tank.setOrientation(Item.Orientation.WEST);
-        this.tank.setSpeedY(2);
+        
     }
     private void goRight(){
-        this.tank.setOrientation(Item.Orientation.EAST);
-        this.tank.setSpeedY(2);
+        
     }
     
 
