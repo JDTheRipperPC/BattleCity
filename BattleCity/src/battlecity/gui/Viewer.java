@@ -106,6 +106,9 @@ public class Viewer extends Canvas implements Runnable {
             sc.getItems().get(i).setNewY(sc.getTankPoint()[i].y * 32);
             sc.getItems().get(i).setOrientation(Item.Orientation.NORTH);
             //iniciamos su thread
+            
+            Tank t = (Tank)sc.getItems().get(i);
+            t.setTank_number(i);           
             new Thread(sc.getItems().get(i)).start();
             System.out.println(sc.getItems().get(i));
         }
@@ -218,18 +221,17 @@ public class Viewer extends Canvas implements Runnable {
     }
 
     private boolean checkCollisionWithTiles(Item proxy_item) {
-
         for (Tile tile : this.sc.getTiles()) {
-
             for (int j = 0; j <= 32; j++) {
-                if (proxy_item.getNewX() == tile.getCoordinateX() + j
-                        && proxy_item.getNewY() == tile.getCoordinateY() + j) {
-                    if(tile.getClass().getSimpleName().equals("Grass")){
+                if (proxy_item.getNewX()  == tile.getCoordinateX() + j
+                        && proxy_item.getNewY()+4 == tile.getCoordinateY() + j) {
+                    if (tile.getClass().getSimpleName().equals("Grass")) {
                         return false;
                     }
                     return true;
                 }
             }
+
         }
         return false;
     }

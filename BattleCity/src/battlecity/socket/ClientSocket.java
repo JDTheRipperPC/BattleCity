@@ -90,7 +90,7 @@ public class ClientSocket extends Thread {
             case "right":
                 tank.goRight();
                 break;
-            case "shot":
+            case "shoot":
                 this.tank.shoot();
                 break;
         }

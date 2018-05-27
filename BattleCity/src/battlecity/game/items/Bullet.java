@@ -15,25 +15,31 @@ import javafx.scene.media.MediaPlayer;
 public class Bullet extends Item {
 
     private int x, y;
+    private int aceleration;
+    private int maxspeed;
 
     public Bullet(BufferedImage imagenPath, Orientation o, Viewer vw) {
         super(imagenPath);
         super.setViewer(vw);
+        super.setLife(1);
 
         this.x = o.getAxisX();
         this.y = o.getAxisY();
 
-        this.setSpeedX(this.x);
-        this.setSpeedY(this.y);
+        this.aceleration = 5;
+        this.maxspeed = 5;
+
+        this.setSpeedX(this.x*4);
+        this.setSpeedY(this.y*4);
 
     }
 
     @Override
     public void run() {
         super.setLastUpdateTime(System.nanoTime());
-        while (super.getLife() == 0 && super.getViewer().isGame()) {
+        while (super.getLife() > 0) {
             try {
-                Thread.sleep(1000 / 140);
+                Thread.sleep(1000 / 60);
             } catch (InterruptedException ex) {
 
             }
@@ -45,12 +51,12 @@ public class Bullet extends Item {
     //-------------------- Custom Speed --------------------------------------->
     @Override
     public synchronized void setSpeedX(int x) {
-        super.setSpeedX(x * 2);
+        super.setSpeedX(x);
     }
 
     @Override
     public synchronized void setSpeedY(int y) {
-        super.setSpeedY(y * 2);
+        super.setSpeedY(y);
     }
 
     //------------------------------------------------------------------------->
@@ -73,18 +79,18 @@ public class Bullet extends Item {
         long elapsedNanos;
         long now;
 
-        if (super.getLife() == 0) {
-            return;
-        }
         now = System.nanoTime();
         elapsedNanos = now - super.getLastUpdateTime();
         super.setLastUpdateTime(now);
         elapsedSeconds = ((float) (elapsedNanos)) / 1000000000.0f;
-
+        if (elapsedSeconds < 1) {
+            elapsedSeconds = 1;
+        }
         super.setNewX(super.getAxisX() + (int) (elapsedSeconds * super.getSpeedX()));
         super.setNewY(super.getAxisY() + (int) (elapsedSeconds * super.getSpeedY()));
-
-        this.updatePosition(elapsedSeconds);
+        if (super.getViewer().itemCanDo(this).equals(Viewer.AllowedAction.MOVE)) {
+            this.updatePosition(elapsedSeconds);
+        }
     }
 
     @Override
@@ -94,6 +100,7 @@ public class Bullet extends Item {
             MediaPlayer mp = new MediaPlayer(m);
             mp.play();
         }).start();
+        this.getViewer().getSc().getItems().remove(this);
     }
 
     @Override
@@ -109,6 +116,39 @@ public class Bullet extends Item {
     private synchronized void updatePosition(float elapsedSeconds) {
         super.setAxisX(super.getNewX());
         super.setAxisY(super.getNewY());
+
+        if (Math.abs(this.aceleration) == Math.abs(this.maxspeed)) {
+            if (super.getSpeedX() > 0) {
+                this.setSpeedX(super.getSpeedX());
+            }
+            if (super.getSpeedY() > 0) {
+                this.setSpeedY(super.getSpeedY());
+            }
+            if (super.getSpeedX() < 0) {
+                this.setSpeedX(super.getSpeedX());
+            }
+            if (super.getSpeedY() < 0) {
+                this.setSpeedY(super.getSpeedY());
+            }
+        } else {
+            if (super.getSpeedX() > 0) {
+                this.aceleration += super.getOrientation().getAxisX();
+
+            }
+            if (super.getSpeedX() < 0) {
+                this.aceleration += super.getOrientation().getAxisX();
+
+            }
+            if (super.getSpeedY() < 0) {
+                this.aceleration += super.getOrientation().getAxisY();
+
+            }
+            if (super.getSpeedY() > 0) {
+                this.aceleration += super.getOrientation().getAxisY();
+
+            }
+
+        }
     }
 
     @Override

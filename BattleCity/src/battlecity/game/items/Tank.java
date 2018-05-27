@@ -3,6 +3,8 @@ package battlecity.game.items;
 import battlecity.game.Item;
 import battlecity.gui.Viewer;
 import battlecity.socket.ClientSocket;
+import battlecity.util.BufferedImageLoader;
+import battlecity.util.BufferedImageUtil;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -16,12 +18,14 @@ public class Tank extends Item {
     private int deceleration;
     private int aceleration;
     private int maxspeed;
+    private int tank_number;
+    private String[] bulletPath = new String[]{"bala_amarilla", "bala_milka", "bala_roja", "bala_verde"};
 
     public Tank(BufferedImage imagenPath, ClientSocket cs) {
         super(imagenPath);
         aceleration = 1;
         deceleration = 1;
-        maxspeed = 2;
+        maxspeed = 4; //times that will repaint at speed of 1 =/
         this.cs = cs;
     }
 
@@ -35,7 +39,6 @@ public class Tank extends Item {
             } catch (InterruptedException ex) {
             }
             this.evaluate(super.getViewer().itemCanDo(this));
-
         }
 
     }
@@ -60,8 +63,17 @@ public class Tank extends Item {
      */
     public void shoot() {
         BufferedImage bllet = null;
+
         Bullet b = new Bullet(bllet, super.getOrientation(), super.getViewer());
-        new Thread(b).start();
+        b.setImagenPath(BufferedImageLoader.getInstance().getBufferMap().get(bulletPath[tank_number]));
+        this.getViewer().getSc().getItems().add(b);
+        b.setAxisX(super.getAxisX() + super.getOrientation().getAxisX());
+        b.setNewX(super.getAxisX() + super.getOrientation().getAxisX());
+        b.setAxisY(super.getAxisY() + super.getOrientation().getAxisY());
+        b.setNewY(super.getAxisY() + super.getOrientation().getAxisY());
+        b.setOrientation(super.getOrientation());
+        new Thread(this.getViewer().getSc().getItems().get(this.getViewer().getSc().getItems().indexOf(b))).start();
+        System.out.println("HOla");
     }
 
     //------------------------------------------------------------------------->
@@ -70,6 +82,7 @@ public class Tank extends Item {
         switch (a) {
             case EXPLODE:
                 this.explode();
+
                 break;
             case MOVE:
                 this.move();
@@ -89,7 +102,7 @@ public class Tank extends Item {
     //---------------------------- Interface ---------------------------------->
     @Override
     public void move() {
-        // TODO : add aceleration
+
         float elapsedSeconds;
         long elapsedNanos;
         long now;
@@ -149,19 +162,19 @@ public class Tank extends Item {
         } else {
             if (super.getSpeedX() > 0) {
                 this.aceleration += super.getOrientation().getAxisX();
-                this.setSpeedX(this.aceleration);
+
             }
             if (super.getSpeedX() < 0) {
                 this.aceleration += super.getOrientation().getAxisX();
-                this.setSpeedX(this.aceleration);
+
             }
             if (super.getSpeedY() < 0) {
                 this.aceleration += super.getOrientation().getAxisY();
-                this.setSpeedY(this.aceleration);
+
             }
             if (super.getSpeedY() > 0) {
                 this.aceleration += super.getOrientation().getAxisY();
-                this.setSpeedY(this.aceleration);
+
             }
 
         }
@@ -169,31 +182,48 @@ public class Tank extends Item {
     }
 
     public void goUp() {
-        super.setOrientation(Orientation.NORTH);
-        this.aceleration = super.getOrientation().getAxisY();
-        this.setSpeedY(this.aceleration);
-        System.out.println(this);
+        if (super.getOrientation() != Orientation.NORTH) {
+            int oldDegrees = super.getOrientation().getDegrees();
+            super.setOrientation(Orientation.NORTH);
+            super.setImagenPath(BufferedImageUtil.rotate(super.getImagenPath(), oldDegrees - super.getOrientation().getDegrees()));
+        } else {
+            this.aceleration = super.getOrientation().getAxisY();
+            super.setSpeedY(this.aceleration);
+        }
     }
 
     public void goDown() {
-        super.setOrientation(Orientation.SOUTH);
-        this.aceleration = super.getOrientation().getAxisY();
-        super.setSpeedY(this.aceleration);
-
+        if (super.getOrientation() != Orientation.SOUTH) {
+            int oldDegrees = super.getOrientation().getDegrees();
+            super.setOrientation(Orientation.SOUTH);
+            super.setImagenPath(BufferedImageUtil.rotate(super.getImagenPath(), oldDegrees - super.getOrientation().getDegrees()));
+        } else {
+            this.aceleration = super.getOrientation().getAxisY();
+            super.setSpeedY(this.aceleration);
+        }
     }
 
     public void goLeft() {
-        super.setOrientation(Orientation.WEST);
-        this.aceleration = super.getOrientation().getAxisX();
-        super.setSpeedX(this.aceleration);
-
+        if (super.getOrientation() != Orientation.WEST) {
+            int oldDegrees = super.getOrientation().getDegrees();
+            super.setOrientation(Orientation.WEST);
+            super.setImagenPath(BufferedImageUtil.rotate(super.getImagenPath(), oldDegrees - super.getOrientation().getDegrees()));
+        } else {
+            this.aceleration = super.getOrientation().getAxisY();
+            super.setSpeedY(this.aceleration);
+        }
     }
 
     public void goRight() {
-        super.setOrientation(Orientation.EAST);
-        this.aceleration = super.getOrientation().getAxisX();
-        super.setSpeedX(this.aceleration);
 
+        if (super.getOrientation() != Orientation.EAST) {
+            int oldDegrees = super.getOrientation().getDegrees();
+            super.setOrientation(Orientation.EAST);
+            super.setImagenPath(BufferedImageUtil.rotate(super.getImagenPath(), oldDegrees - super.getOrientation().getDegrees()));
+        } else {
+            this.aceleration = super.getOrientation().getAxisY();
+            super.setSpeedY(this.aceleration);
+        }
     }
 
     public ClientSocket getClientSocket() {
@@ -221,6 +251,14 @@ public class Tank extends Item {
     @Override
     public String toString() {
         return " Coordenadas: " + super.getAxisX() + ", " + super.getAxisY() + "\n Nuevas C " + super.getNewX() + ", " + super.getNewY();
+    }
+
+    public int getTank_number() {
+        return tank_number;
+    }
+
+    public void setTank_number(int tank_number) {
+        this.tank_number = tank_number;
     }
 
 }
