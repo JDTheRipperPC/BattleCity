@@ -216,9 +216,19 @@ public class Viewer extends Canvas implements Runnable {
         return false;
     }
 
-    private boolean checkCollisionWithTiles(Item i) {
-        for (Tile x : this.sc.getTiles()) {
+    private boolean checkCollisionWithTiles(Item proxy_item) {
 
+        for (Tile tile : this.sc.getTiles()) {
+
+            for (int j = 0; j <= 32; j++) {
+                if (proxy_item.getNewX() == tile.getCoordinateX() + j
+                        && proxy_item.getNewY() == tile.getCoordinateY() + j) {
+                    if(tile.getClass().getSimpleName().equals("Grass")){
+                        return false;
+                    }
+                    return true;
+                }
+            }
         }
         return false;
     }
