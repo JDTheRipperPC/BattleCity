@@ -5,7 +5,6 @@ import battlecity.game.Item;
 import battlecity.game.Tile;
 import battlecity.util.BufferedImageLoader;
 import battlecity.game.items.Tank;
-import battlecity.game.tile.Brick;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -129,6 +128,8 @@ public class Viewer extends Canvas implements Runnable {
             return;
         }
         Graphics g = bs.getDrawGraphics();
+        g.setColor(Color.black);
+        g.fillRect(0, 0, getWidth(), getHeight());
         paintItems(g);
         paintTiles(g);
         bs.show();
