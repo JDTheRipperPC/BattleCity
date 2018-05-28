@@ -5,10 +5,12 @@ import battlecity.game.Item;
 import battlecity.game.Tile;
 import battlecity.util.BufferedImageLoader;
 import battlecity.game.items.Tank;
+import battlecity.game.tile.Brick;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -75,7 +77,7 @@ public class Viewer extends Canvas implements Runnable {
         this.clients = clients;
     }
 
-    public Scene getSc() {
+    public synchronized Scene getSc() {
         return sc;
     }
 
@@ -106,9 +108,9 @@ public class Viewer extends Canvas implements Runnable {
             sc.getItems().get(i).setNewY(sc.getTankPoint()[i].y * 32);
             sc.getItems().get(i).setOrientation(Item.Orientation.NORTH);
             //iniciamos su thread
-            
-            Tank t = (Tank)sc.getItems().get(i);
-            t.setTank_number(i);           
+
+            Tank t = (Tank) sc.getItems().get(i);
+            t.setTank_number(i);
             new Thread(sc.getItems().get(i)).start();
             System.out.println(sc.getItems().get(i));
         }
@@ -204,10 +206,16 @@ public class Viewer extends Canvas implements Runnable {
     public boolean checkCollision(Item i) {
 
         //following if's check if collides with walls
-        if (i.getNewX() > this.dim.width) {
+        if (i.getNewX() >= this.dim.width) {
             return true;
         }
-        if (i.getNewY() > this.dim.height) {
+        if (i.getNewX() <= 0) {
+            return true;
+        }
+        if (i.getNewY() <= 0) {
+            return true;
+        }
+        if (i.getNewY() >= this.dim.height) {
             return true;
         }
         //following if's check if collides with items or tiles
@@ -220,25 +228,42 @@ public class Viewer extends Canvas implements Runnable {
         return false;
     }
 
-    private boolean checkCollisionWithTiles(Item proxy_item) {
+    private synchronized boolean checkCollisionWithTiles(Item proxy_item) {
+
+        Rectangle proxy_rectangle = new Rectangle(proxy_item.getNewX(), proxy_item.getNewY(), 32, 32);
         for (Tile tile : this.sc.getTiles()) {
-            for (int j = 0; j <= 32; j++) {
-                if (proxy_item.getNewX()  == tile.getCoordinateX() + j
-                        && proxy_item.getNewY()+4 == tile.getCoordinateY() + j) {
-                    if (tile.getClass().getSimpleName().equals("Grass")) {
-                        return false;
-                    }
+            Rectangle tile_rectangle = new Rectangle(tile.getCoordinateX(), tile.getCoordinateY(), 32, 32);
+            if (!tile.getClass().getSimpleName().equals("Grass")
+                    && proxy_rectangle.intersects(tile_rectangle)) {
+                if (!tile.getClass().getSimpleName().equals("Water")
+                        && !proxy_item.getClass().getSimpleName().equals("Bullet")) {
                     return true;
+                } else if (tile.getClass().getSimpleName().equals("Brick") && proxy_item.getClass().getSimpleName().equals("Bullet")) {
+                    Brick b = (Brick) tile;
+                    proxy_item.colide();
+                    b.getDmg();
+                    if (b.getLife() == 0) {
+                        this.sc.getTiles().remove(b);
+                    }
                 }
             }
-
         }
         return false;
+
     }
 
-    private boolean checkCollisionWithItems(Item i) {
-        for (Item proxy_item : this.sc.getItems()) {
-
+    private synchronized boolean checkCollisionWithItems(Item proxy_item) {
+        Rectangle proxy_rectangle = new Rectangle(proxy_item.getNewX(), proxy_item.getNewY(), 32, 32);
+        for (Item item : this.sc.getItems()) {
+            if (item != proxy_item && !item.getClass().getSimpleName().equals("Bullet")) {
+                Rectangle item_rectangle = new Rectangle(item.getAxisX(), item.getAxisY(), 32, 32);
+                if (item_rectangle.intersects(proxy_rectangle) && proxy_item.getClass().getSimpleName().equals("Bullet")) {
+                    item.evaluate(AllowedAction.TAKEDMG);
+                    proxy_item.colide();
+                    return true;
+                }
+                return item_rectangle.intersects(proxy_rectangle);
+            }
         }
         return false;
     }

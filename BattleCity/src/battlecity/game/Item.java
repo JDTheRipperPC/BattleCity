@@ -38,7 +38,7 @@ public abstract class Item implements Runnable, ItemInterface {
      */
     public static enum Orientation {
 
-        NORTH(0, -1, 0), SOUTH(0, 1, 180), WEST(-1, 0, 270), EAST(1, 0, 90);
+        NORTH(0, -1, 0), SOUTH(0, 1, 180), WEST(1, 0, 270), EAST(-1, 0, 90);
         private int axisX;
         private int axisY;
         private int degrees;

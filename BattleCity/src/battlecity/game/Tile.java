@@ -1,6 +1,8 @@
 package battlecity.game;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 /**
@@ -42,7 +44,7 @@ public abstract class Tile {
 
     @Override
     public String toString() {
-        return "" + this.coordinateX + " " + this.coordinateY;
+        return "" + this.coordinateX/32 + " " + this.coordinateY/32;
     }
-
+   
 }

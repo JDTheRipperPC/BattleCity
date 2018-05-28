@@ -19,6 +19,7 @@ public class Brick extends Tile {
                 .getBufferMap()
                 .get("tile_brick")
         );
+        life = 3;
     }
 
     @Override

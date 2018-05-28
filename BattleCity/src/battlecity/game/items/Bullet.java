@@ -67,6 +67,7 @@ public class Bullet extends Item {
                 this.move();
                 break;
             default:
+                this.colide();
                 this.explode();
                 break;
         }
@@ -95,17 +96,13 @@ public class Bullet extends Item {
 
     @Override
     public void explode() {
-        new Thread(() -> {
-            Media m = new Media(new File("res/audio/explosion.wav").toURI().toString());
-            MediaPlayer mp = new MediaPlayer(m);
-            mp.play();
-        }).start();
-        this.getViewer().getSc().getItems().remove(this);
+        
     }
 
     @Override
     public void colide() {
         super.setLife(0);
+        this.getViewer().getSc().getItems().remove(this);
     }
 
     @Override
