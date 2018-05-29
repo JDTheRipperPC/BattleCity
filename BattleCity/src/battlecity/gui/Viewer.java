@@ -231,14 +231,18 @@ public class Viewer extends Canvas implements Runnable {
         if (i.getNewY() >= this.dim.height) {
             return true;
         }
-        //following if's check if collides with items or tiles
-        if (this.checkCollisionWithItems(i)) {
-            return true;
-        }
+
         if (this.checkCollisionWithTiles(i)) {
             return true;
         }
-        return false;
+        if (i.getClass().getSimpleName().equals("Bullet")) {
+            Bullet b = (Bullet) i;
+            return checkBulletVsTank(b);
+        } else {
+            Tank t = (Tank) i;
+            return checkTankVsTank(t);
+        }
+
     }
 
     private synchronized boolean checkCollisionWithTiles(Item proxy_item) {
@@ -292,18 +296,38 @@ public class Viewer extends Canvas implements Runnable {
     private synchronized boolean checkCollisionWithItems(Item proxy_item) {
         Rectangle proxy_rectangle = new Rectangle(proxy_item.getNewX(), proxy_item.getNewY(), 32, 32);
         for (Item item : this.sc.getTanks()) {
-            if (item != proxy_item && !item.getClass().getSimpleName().equals("Bullet")) {
-                Rectangle item_rectangle = new Rectangle(item.getAxisX(), item.getAxisY(), 32, 32);
-                if (item_rectangle.intersects(proxy_rectangle) && proxy_item.getClass().getSimpleName().equals("Bullet")
-                        && item.getId() != proxy_item.getId()) {
-                    item.explode();
-                    if (item.getLife() == 0) {
-                        this.sc.getTanks().remove(item);
-                    }
-                    proxy_item.colide();
+
+            Rectangle item_rectangle = new Rectangle(item.getAxisX(), item.getAxisY(), 32, 32);
+
+        }
+        return false;
+    }
+
+    private synchronized boolean checkBulletVsTank(Bullet b) {
+        Rectangle proxy_rectangle = new Rectangle(b.getNewX(), b.getNewY(), 32, 32);
+        for (Tank t : this.sc.getTanks()) {
+            Rectangle tank_rectangle = new Rectangle(t.getAxisX(), t.getAxisY(), 32, 32);
+            if (proxy_rectangle.intersects(tank_rectangle) && b.getId() != t.getId()) {
+                t.explode();
+                b.colide();
+
+                if (t.getLife() == 0) {
+                    this.sc.getTanks().remove(t);
+                    this.clients.remove(t.getClientSocket());
+                }
+            }
+        }
+        return false;
+    }
+
+    private synchronized boolean checkTankVsTank(Tank b) {
+        Rectangle proxy_rectangle = new Rectangle(b.getNewX(), b.getNewY(), 32, 32);
+        for (Tank t : this.sc.getTanks()) {
+            if (t != b) {
+                Rectangle tank_rectangle = new Rectangle(t.getAxisX(), t.getAxisY(), 32, 32);
+                if (proxy_rectangle.intersects(tank_rectangle)) {
                     return true;
                 }
-                return item_rectangle.intersects(proxy_rectangle);
             }
         }
         return false;

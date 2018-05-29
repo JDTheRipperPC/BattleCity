@@ -122,9 +122,7 @@ public class Tank extends Item {
 
     @Override
     public synchronized void explode() {
-        super.setLife(super.getLife() - 1);
-        System.out.println("I got shot nigga =/");
-        System.out.println(super.getLife());
+        super.setLife(super.getLife() - 1);        
     }
 
     @Override
