@@ -2,6 +2,8 @@ package battlecity.gui;
 
 import battlecity.game.Item;
 import battlecity.game.Tile;
+import battlecity.game.items.Bullet;
+import battlecity.game.items.Tank;
 import battlecity.game.tile.Brick;
 import battlecity.game.tile.Grass;
 import battlecity.game.tile.Metal;
@@ -23,13 +25,15 @@ import java.util.logging.Logger;
  */
 public class Scene {
 
-    private ArrayList<Item> items;
+    private ArrayList<Bullet> bullets;
+    private ArrayList<Tank> tanks;
     private ArrayList<Tile> tiles;
 
     private Point[] tankPoint;
 
     public Scene() {
-        items = new ArrayList<>();
+        bullets = new ArrayList<>();
+        tanks = new ArrayList<>();
         tiles = new ArrayList<>();
         tankPoint = new Point[4];
     }
@@ -81,15 +85,25 @@ public class Scene {
         }
     }
 
-    public ArrayList<Item> getItems() {
-        return items;
+    public synchronized ArrayList<Bullet> getBullets() {
+        return bullets;
     }
 
-    public void setItems(ArrayList<Item> items) {
-        this.items = items;
+    public void setBullets(ArrayList<Bullet> bullets) {
+        this.bullets = bullets;
     }
 
-    public ArrayList<Tile> getTiles() {
+    public synchronized ArrayList<Tank> getTanks() {
+        return tanks;
+    }
+
+    public void setTanks(ArrayList<Tank> tanks) {
+        this.tanks = tanks;
+    }
+
+    
+
+    public synchronized ArrayList<Tile> getTiles() {
         return tiles;
     }
 
@@ -100,7 +114,7 @@ public class Scene {
     public Point[] getTankPoint() {
         return tankPoint;
     }
-    
+
     class JsonScene {
 
         private int size_width;

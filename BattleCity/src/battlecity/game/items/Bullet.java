@@ -18,19 +18,19 @@ public class Bullet extends Item {
     private int aceleration;
     private int maxspeed;
 
-    public Bullet(BufferedImage imagenPath, Orientation o, Viewer vw) {
+    public Bullet(BufferedImage imagenPath, Orientation o, Viewer vw, int id) {
         super(imagenPath);
         super.setViewer(vw);
         super.setLife(1);
-
+        super.setId(id);
         this.x = o.getAxisX();
         this.y = o.getAxisY();
 
         this.aceleration = 5;
         this.maxspeed = 5;
 
-        this.setSpeedX(this.x*4);
-        this.setSpeedY(this.y*4);
+        this.setSpeedX(this.x * 2);
+        this.setSpeedY(this.y * 2);
 
     }
 
@@ -39,23 +39,24 @@ public class Bullet extends Item {
         super.setLastUpdateTime(System.nanoTime());
         while (super.getLife() > 0) {
             try {
-                Thread.sleep(1000 / 60);
+                Thread.sleep(1000 / 120);
             } catch (InterruptedException ex) {
 
             }
-            this.evaluate(super.getViewer().itemCanDo(this));
-
+            if (super.getLife() > 0) {
+                this.evaluate(super.getViewer().itemCanDo(this));
+            }
         }
     }
 
     //-------------------- Custom Speed --------------------------------------->
     @Override
-    public synchronized void setSpeedX(int x) {
+    public synchronized void setSpeedX(float x) {
         super.setSpeedX(x);
     }
 
     @Override
-    public synchronized void setSpeedY(int y) {
+    public synchronized void setSpeedY(float y) {
         super.setSpeedY(y);
     }
 
@@ -96,13 +97,13 @@ public class Bullet extends Item {
 
     @Override
     public void explode() {
-        
+
     }
 
     @Override
     public void colide() {
         super.setLife(0);
-        this.getViewer().getSc().getItems().remove(this);
+        this.getViewer().getSc().getBullets().remove(this);
     }
 
     @Override

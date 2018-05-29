@@ -15,8 +15,9 @@ public abstract class Item implements Runnable, ItemInterface {
     private int newX;
     private int newY;
     private int life;
-    private int speedX;
-    private int speedY;
+    private int id;
+    private float speedX;
+    private float speedY;
     private volatile long lastUpdateTime;
 
     private Orientation orientation;
@@ -103,11 +104,11 @@ public abstract class Item implements Runnable, ItemInterface {
         return life;
     }
 
-    public synchronized int getSpeedX() {
+    public synchronized float getSpeedX() {
         return speedX;
     }
 
-    public synchronized int getSpeedY() {
+    public synchronized float getSpeedY() {
         return speedY;
     }
 
@@ -139,11 +140,11 @@ public abstract class Item implements Runnable, ItemInterface {
         this.life = life;
     }
 
-    public synchronized void setSpeedX(int speed) {
+    public synchronized void setSpeedX(float speed) {
         this.speedX = speed;
     }
 
-    public synchronized void setSpeedY(int speed) {
+    public synchronized void setSpeedY(float speed) {
         this.speedY = speed;
     }
 
@@ -171,7 +172,15 @@ public abstract class Item implements Runnable, ItemInterface {
         this.newY = i;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     //---------------------- Publics -------------------------------------------    
-    
-    public void evaluate(Viewer.AllowedAction a){}
+    public void evaluate(Viewer.AllowedAction a) {
+    }
 }

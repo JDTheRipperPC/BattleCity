@@ -37,7 +37,7 @@ public class ClientSocket extends Thread {
         this.viewer = v;
         System.out.println("Nuevo ClientSocket");
         this.tank = new Tank(null, this);
-        this.viewer.getSc().getItems().add(tank);
+        this.viewer.getSc().getTanks().add(tank);
 
     }
 
@@ -92,6 +92,9 @@ public class ClientSocket extends Thread {
                 break;
             case "shoot":
                 this.tank.shoot();
+                break;
+            default:
+                tank.goUp();
                 break;
         }
     }

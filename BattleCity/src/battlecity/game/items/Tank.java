@@ -15,17 +15,16 @@ import java.awt.image.BufferedImage;
 public class Tank extends Item {
 
     private ClientSocket cs;
-    private int deceleration;
-    private int aceleration;
+    private float deceleration;
+    private float aceleration;
     private int maxspeed;
-    private int tank_number;
     private String[] bulletPath = new String[]{"bala_amarilla", "bala_milka", "bala_roja", "bala_verde"};
 
     public Tank(BufferedImage imagenPath, ClientSocket cs) {
         super(imagenPath);
-        aceleration = 1;
-        deceleration = 1;
-        maxspeed = 4; //times that will repaint at speed of 1 =/
+        aceleration = 1f;
+        deceleration = 0.5f;
+        maxspeed = 2; //times that will repaint at speed of 1 =/
         this.cs = cs;
     }
 
@@ -44,14 +43,14 @@ public class Tank extends Item {
     }
 
     @Override
-    public synchronized void setSpeedX(int speedX) {
+    public synchronized void setSpeedX(float speedX) {
         super.setSpeedY(0);
         super.setSpeedX(speedX);
 
     }
 
     @Override
-    public synchronized void setSpeedY(int speedY) {
+    public synchronized void setSpeedY(float speedY) {
         super.setSpeedX(0);
         super.setSpeedY(speedY);
     }
@@ -64,16 +63,16 @@ public class Tank extends Item {
     public void shoot() {
         BufferedImage bllet = null;
 
-        Bullet b = new Bullet(bllet, super.getOrientation(), super.getViewer());
-        b.setImagenPath(BufferedImageLoader.getInstance().getBufferMap().get(bulletPath[tank_number]));
+        Bullet b = new Bullet(bllet, super.getOrientation(), super.getViewer(), super.getId());
+        b.setImagenPath(BufferedImageLoader.getInstance().getBufferMap().get(bulletPath[super.getId()]));
         b.setAxisX(super.getAxisX() + super.getOrientation().getAxisX());
         b.setNewX(super.getAxisX() + super.getOrientation().getAxisX());
         b.setAxisY(super.getAxisY() + super.getOrientation().getAxisY());
         b.setNewY(super.getAxisY() + super.getOrientation().getAxisY());
         b.setOrientation(super.getOrientation());
 
-        this.getViewer().getSc().getItems().add(b);
-        new Thread(this.getViewer().getSc().getItems().get(this.getViewer().getSc().getItems().indexOf(b))).start();
+        this.getViewer().getSc().getBullets().add(b);
+        new Thread(b).start();
 
     }
 
@@ -91,9 +90,6 @@ public class Tank extends Item {
 
             case TAKEDMG:
                 super.setLife(super.getLife() - 1);
-                if (super.getLife() == 0) {
-                    this.explode();
-                }
                 break;
             case BLOCKED:
                 this.colide();
@@ -125,8 +121,10 @@ public class Tank extends Item {
     }
 
     @Override
-    public void explode() {
-        super.getViewer().getSc().getItems().remove(this);
+    public synchronized void explode() {
+        super.setLife(super.getLife() - 1);
+        System.out.println("I got shot nigga =/");
+        System.out.println(super.getLife());
     }
 
     @Override
@@ -148,7 +146,7 @@ public class Tank extends Item {
         super.setAxisX(super.getNewX());
         super.setAxisY(super.getNewY());
 
-        if (Math.abs(this.aceleration) == Math.abs(this.maxspeed)) {
+        if (Math.abs(this.aceleration) >= Math.abs(this.maxspeed)) {
             if (super.getSpeedX() > 0) {
                 this.setSpeedX(super.getSpeedX() - this.deceleration);
             }
@@ -257,11 +255,11 @@ public class Tank extends Item {
     }
 
     public int getTank_number() {
-        return tank_number;
+        return super.getId();
     }
 
     public void setTank_number(int tank_number) {
-        this.tank_number = tank_number;
+        super.setId(tank_number);
     }
 
 }

@@ -3,6 +3,7 @@ package battlecity.gui;
 import battlecity.socket.ClientSocket;
 import battlecity.game.Item;
 import battlecity.game.Tile;
+import battlecity.game.items.Bullet;
 import battlecity.util.BufferedImageLoader;
 import battlecity.game.items.Tank;
 import battlecity.game.tile.Brick;
@@ -98,21 +99,20 @@ public class Viewer extends Canvas implements Runnable {
         this.game = true;
         System.out.println("---");
         for (int i = 0; i < clients.size(); i++) {
-            sc.getItems().get(i).setAxisX(sc.getTankPoint()[i].x * 32);
-            sc.getItems().get(i).setAxisY(sc.getTankPoint()[i].y * 32);
-            sc.getItems().get(i).setImagenPath(BufferedImageLoader.getInstance().getBufferMap().get(tankImgPath[i]));
+            sc.getTanks().get(i).setAxisX(sc.getTankPoint()[i].x * 32);
+            sc.getTanks().get(i).setAxisY(sc.getTankPoint()[i].y * 32);
+            sc.getTanks().get(i).setImagenPath(BufferedImageLoader.getInstance().getBufferMap().get(tankImgPath[i]));
 
             // setting tank properties
-            sc.getItems().get(i).setViewer(this);
-            sc.getItems().get(i).setNewX(sc.getTankPoint()[i].x * 32);
-            sc.getItems().get(i).setNewY(sc.getTankPoint()[i].y * 32);
-            sc.getItems().get(i).setOrientation(Item.Orientation.NORTH);
+            sc.getTanks().get(i).setViewer(this);
+            sc.getTanks().get(i).setNewX(sc.getTankPoint()[i].x * 32);
+            sc.getTanks().get(i).setNewY(sc.getTankPoint()[i].y * 32);
+            sc.getTanks().get(i).setOrientation(Item.Orientation.NORTH);
             //iniciamos su thread
 
-            Tank t = (Tank) sc.getItems().get(i);
-            t.setTank_number(i);
-            new Thread(sc.getItems().get(i)).start();
-            System.out.println(sc.getItems().get(i));
+            sc.getTanks().get(i).setTank_number(i);
+            new Thread(sc.getTanks().get(i)).start();
+            System.out.println(sc.getTanks().get(i));
         }
         createBufferStrategy(2);
         while (game && !checkWinner()) {
@@ -135,17 +135,27 @@ public class Viewer extends Canvas implements Runnable {
         Graphics g = bs.getDrawGraphics();
         g.setColor(Color.black);
         g.fillRect(0, 0, getWidth(), getHeight());
-        paintItems(g);
+        paintTanks(g);
+        paintBullets(g);
         paintTiles(g);
         bs.show();
         g.dispose();
     }
 
-    private synchronized void paintItems(Graphics g) {
-        if (sc.getItems() == null || sc.getItems().isEmpty()) {
+    private synchronized void paintBullets(Graphics g) {
+        if (sc.getBullets() == null || sc.getBullets().isEmpty()) {
             return;
         }
-        sc.getItems().forEach((i) -> {
+        sc.getBullets().forEach((i) -> {
+            i.paint(g);
+        });
+    }
+
+    private synchronized void paintTanks(Graphics g) {
+        if (sc.getTanks() == null || sc.getTanks().isEmpty()) {
+            return;
+        }
+        sc.getTanks().forEach((i) -> {
             i.paint(g);
         });
     }
@@ -166,7 +176,10 @@ public class Viewer extends Canvas implements Runnable {
             return;
         }
         BufferedImage bi = new BufferedImage(getSize().width, getSize().height, BufferedImage.TYPE_4BYTE_ABGR);
-        for (Item i : sc.getItems()) {
+        for (Item i : sc.getTanks()) {
+            g.drawImage(i.getImagenPath(), i.getAxisX(), i.getAxisY(), null);
+        }
+        for (Item i : sc.getBullets()) {
             g.drawImage(i.getImagenPath(), i.getAxisX(), i.getAxisY(), null);
         }
         for (Tile t : sc.getTiles()) {
@@ -229,36 +242,64 @@ public class Viewer extends Canvas implements Runnable {
     }
 
     private synchronized boolean checkCollisionWithTiles(Item proxy_item) {
-
         Rectangle proxy_rectangle = new Rectangle(proxy_item.getNewX(), proxy_item.getNewY(), 32, 32);
         for (Tile tile : this.sc.getTiles()) {
             Rectangle tile_rectangle = new Rectangle(tile.getCoordinateX(), tile.getCoordinateY(), 32, 32);
-            if (!tile.getClass().getSimpleName().equals("Grass")
-                    && proxy_rectangle.intersects(tile_rectangle)) {
-                if (!tile.getClass().getSimpleName().equals("Water")
-                        && !proxy_item.getClass().getSimpleName().equals("Bullet")) {
-                    return true;
-                } else if (tile.getClass().getSimpleName().equals("Brick") && proxy_item.getClass().getSimpleName().equals("Bullet")) {
-                    Brick b = (Brick) tile;
-                    proxy_item.colide();
-                    b.getDmg();
-                    if (b.getLife() == 0) {
-                        this.sc.getTiles().remove(b);
-                    }
+            if (proxy_rectangle.intersects(tile_rectangle)) {
+                switch (proxy_item.getClass().getSimpleName()) {
+                    case "Bullet":
+                        return checkCollisionBulletTile(tile, proxy_item);
+                    case "Tank":
+                        return checkCollisionTankTile(tile);
                 }
             }
+
         }
         return false;
 
     }
 
+    private synchronized boolean checkCollisionBulletTile(Tile tile, Item i) {
+
+        switch (tile.getClass().getSimpleName()) {
+            case "Grass":
+                return false;
+            case "Water":
+                return false;
+            case "Brick":
+                Brick b = (Brick) tile;
+                b.getDmg();
+                i.colide();
+                if (b.getLife() == 0) {
+                    this.sc.getTiles().remove(b);
+                }
+                return true;
+            default:
+                return true;
+        }
+
+    }
+
+    private synchronized boolean checkCollisionTankTile(Tile tile) {
+        switch (tile.getClass().getSimpleName()) {
+            case "Grass":
+                return false;
+            default:
+                return true;
+        }
+    }
+
     private synchronized boolean checkCollisionWithItems(Item proxy_item) {
         Rectangle proxy_rectangle = new Rectangle(proxy_item.getNewX(), proxy_item.getNewY(), 32, 32);
-        for (Item item : this.sc.getItems()) {
+        for (Item item : this.sc.getTanks()) {
             if (item != proxy_item && !item.getClass().getSimpleName().equals("Bullet")) {
                 Rectangle item_rectangle = new Rectangle(item.getAxisX(), item.getAxisY(), 32, 32);
-                if (item_rectangle.intersects(proxy_rectangle) && proxy_item.getClass().getSimpleName().equals("Bullet")) {
-                    item.evaluate(AllowedAction.TAKEDMG);
+                if (item_rectangle.intersects(proxy_rectangle) && proxy_item.getClass().getSimpleName().equals("Bullet")
+                        && item.getId() != proxy_item.getId()) {
+                    item.explode();
+                    if (item.getLife() == 0) {
+                        this.sc.getTanks().remove(item);
+                    }
                     proxy_item.colide();
                     return true;
                 }
