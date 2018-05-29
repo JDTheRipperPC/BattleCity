@@ -1,5 +1,6 @@
 package battlecity.gui;
 
+import battlecity.Main;
 import battlecity.socket.ClientSocket;
 import battlecity.game.Item;
 import battlecity.game.Tile;
@@ -24,6 +25,7 @@ public class Viewer extends Canvas implements Runnable {
     private Dimension dim;
     private Scene sc;
     private boolean game;
+    private Main menu;
 
     private String[] tankImgPath = new String[]{"tanque_amarillo", "tanque_milka", "tanque_rojo", "tanque_verde"};
 
@@ -93,6 +95,14 @@ public class Viewer extends Canvas implements Runnable {
         this.tankImgPath = tankImgPath;
     }
 
+    public Main getMenu() {
+        return menu;
+    }
+
+    public void setMenu(Main menu) {
+        this.menu = menu;
+    }
+
     @Override
     public void run() {
         this.game = true;
@@ -115,6 +125,7 @@ public class Viewer extends Canvas implements Runnable {
             System.out.println(sc.getItems().get(i));
         }
         createBufferStrategy(2);
+        game = false; // REMOVE ME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         while (game && !checkWinner()) {
             paint();
             try {
@@ -123,6 +134,7 @@ public class Viewer extends Canvas implements Runnable {
             }
         }
         System.out.println("game end");
+        menu.resetMenu();
     }
 
     public synchronized void paint() {

@@ -1,5 +1,6 @@
 package battlecity;
 
+import battlecity.game.Item;
 import battlecity.gui.Viewer;
 import battlecity.socket.GameServerSocket;
 import battlecity.util.AudioPlayer;
@@ -134,6 +135,7 @@ public class Main extends JFrame implements KeyListener {
         sl.putConstraint(SpringLayout.NORTH, viewer, 0, SpringLayout.NORTH, mainPanel);
         sl.putConstraint(SpringLayout.WEST, viewer, 0, SpringLayout.WEST, mainPanel);
         mainPanel.add(viewer, sl);
+        viewer.setMenu(this);
     }
 
     private void initPlayers() {
@@ -246,13 +248,19 @@ public class Main extends JFrame implements KeyListener {
     }
 
     public void resetMenu() {
-        //viewer.getClients().clear();
-        viewer.getSc().getItems().clear(); // Fix after change it by tank and bullet
         viewer.getSc().getTiles().clear();
+        for (Item i : viewer.getSc().getItems()){
+            i.setLife(0);
+        }
+        viewer.getSc().getItems().clear(); // Fix after change it by tank and bullet
+        viewer.getClients().clear();
         viewer.getSc().load(maps[point].getText());
-        initMenuRefresh();
         mainPanel.setVisible(false);
         menuPanel.setVisible(true);
+        for(JLabel p :players){
+            p.setVisible(false);
+        }
+        initMenuRefresh();
     }
 
     static { // Needed to play sound in background (eg. explosions)
