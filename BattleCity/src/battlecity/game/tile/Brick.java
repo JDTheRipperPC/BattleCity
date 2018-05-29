@@ -1,7 +1,9 @@
 package battlecity.game.tile;
 
 import battlecity.game.Tile;
+import battlecity.gui.Viewer;
 import battlecity.util.BufferedImageLoader;
+import java.awt.Graphics;
 
 /**
  *
@@ -17,11 +19,12 @@ public class Brick extends Tile {
                 .getBufferMap()
                 .get("tile_brick")
         );
+        life = 3;
     }
 
-  @Override
-    public void paint(Viewer v) {
-        Graphics g = v.getGraphics();
+    @Override
+    public void paint(Graphics g) {
+
         if (g == null) {
             System.err.println("Graphics are null");
             return;
