@@ -15,8 +15,8 @@ public abstract class Item implements Runnable, ItemInterface {
     private int newX;
     private int newY;
     private int life;
-    private float speedX;
-    private float speedY;
+    private int speedX;
+    private int speedY;
     private volatile long lastUpdateTime;
 
     private Orientation orientation;
@@ -38,7 +38,7 @@ public abstract class Item implements Runnable, ItemInterface {
      */
     public static enum Orientation {
 
-        NORTH(0, -1, 0), SOUTH(0, 1, 180), WEST(-1, 0, 270), EAST(1, 0, 90);
+        NORTH(0, -1, 0), SOUTH(0, 1, 180), WEST(1, 0, 270), EAST(-1, 0, 90);
         private int axisX;
         private int axisY;
         private int degrees;
@@ -103,11 +103,11 @@ public abstract class Item implements Runnable, ItemInterface {
         return life;
     }
 
-    public synchronized float getSpeedX() {
+    public synchronized int getSpeedX() {
         return speedX;
     }
 
-    public synchronized float getSpeedY() {
+    public synchronized int getSpeedY() {
         return speedY;
     }
 
@@ -139,11 +139,11 @@ public abstract class Item implements Runnable, ItemInterface {
         this.life = life;
     }
 
-    public synchronized void setSpeedX(float speed) {
+    public synchronized void setSpeedX(int speed) {
         this.speedX = speed;
     }
 
-    public synchronized void setSpeedY(float speed) {
+    public synchronized void setSpeedY(int speed) {
         this.speedY = speed;
     }
 
@@ -172,4 +172,6 @@ public abstract class Item implements Runnable, ItemInterface {
     }
 
     //---------------------- Publics -------------------------------------------    
+    
+    public void evaluate(Viewer.AllowedAction a){}
 }

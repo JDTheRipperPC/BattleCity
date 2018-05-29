@@ -1,6 +1,8 @@
 package battlecity.game;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 /**
@@ -36,8 +38,13 @@ public abstract class Tile {
         this.coordinateY = coordinateY;
     }
 
-    public void paint(Graphics g){
+    public void paint(Graphics g) {
         g.drawImage(bi, coordinateX, coordinateY, null);
     }
 
+    @Override
+    public String toString() {
+        return "" + this.coordinateX/32 + " " + this.coordinateY/32;
+    }
+   
 }

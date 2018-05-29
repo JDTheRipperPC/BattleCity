@@ -1,5 +1,6 @@
 package battlecity.socket;
 
+import battlecity.game.Item;
 import battlecity.game.items.Tank;
 import battlecity.gui.Viewer;
 import java.io.BufferedReader;
@@ -65,7 +66,7 @@ public class ClientSocket extends Thread {
     public void run() {
         String msg;
         System.out.println(this);
-        while (tank.getLife() > 0 && viewer.isGame()) {
+        while (tank.getLife() > 0) {
             try {
                 msg = br.readLine();
                 evaluateMessage(msg);
@@ -78,14 +79,19 @@ public class ClientSocket extends Thread {
     private void evaluateMessage(String msg) {
         switch (msg) {
             case "up":
+                tank.goUp();
                 break;
             case "down":
+                tank.goDown();
                 break;
             case "left":
+                tank.goLeft();
                 break;
             case "right":
+                tank.goRight();
                 break;
-            case "shot":
+            case "shoot":
+                this.tank.shoot();
                 break;
         }
     }
@@ -99,5 +105,33 @@ public class ClientSocket extends Thread {
             System.err.println(ex.getMessage());
         }
     }
+
+    public void youLose() {
+       this.sendMessage("lose");
+    }
+
+    public void youWin() {
+        this.sendMessage("win");
+    }
+
+    public void youTakeDmg() {
+        this.sendMessage("dmg");
+    }
+    
+    private void goUp(){
+        
+    }
+    
+    private void goDown(){
+        
+    }
+    
+    private void goLeft(){
+        
+    }
+    private void goRight(){
+        
+    }
+    
 
 }

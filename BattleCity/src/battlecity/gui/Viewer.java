@@ -4,10 +4,13 @@ import battlecity.socket.ClientSocket;
 import battlecity.game.Item;
 import battlecity.game.Tile;
 import battlecity.util.BufferedImageLoader;
+import battlecity.game.items.Tank;
+import battlecity.game.tile.Brick;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -25,7 +28,7 @@ public class Viewer extends Canvas implements Runnable {
     private String[] tankImgPath = new String[]{"tanque_amarillo", "tanque_milka", "tanque_rojo", "tanque_verde"};
 
     public static enum AllowedAction {
-        MOVE, TAKEDMG, SLOWDOWN, EXPLODE, BLOCKED;
+        MOVE, TAKEDMG, EXPLODE, BLOCKED;
     }
 
     private ArrayList<ClientSocket> clients;
@@ -55,6 +58,13 @@ public class Viewer extends Canvas implements Runnable {
         return clients;
     }
 
+    public synchronized void removeClient(ClientSocket c) {
+        this.clients.remove(c);
+        if (this.checkWinner()) {
+            this.clients.get(0).youWin();
+        }
+    }
+
     public boolean isGame() {
         return this.game;
     }
@@ -67,7 +77,7 @@ public class Viewer extends Canvas implements Runnable {
         this.clients = clients;
     }
 
-    public Scene getSc() {
+    public synchronized Scene getSc() {
         return sc;
     }
 
@@ -91,10 +101,21 @@ public class Viewer extends Canvas implements Runnable {
             sc.getItems().get(i).setAxisX(sc.getTankPoint()[i].x * 32);
             sc.getItems().get(i).setAxisY(sc.getTankPoint()[i].y * 32);
             sc.getItems().get(i).setImagenPath(BufferedImageLoader.getInstance().getBufferMap().get(tankImgPath[i]));
+
+            // setting tank properties
+            sc.getItems().get(i).setViewer(this);
+            sc.getItems().get(i).setNewX(sc.getTankPoint()[i].x * 32);
+            sc.getItems().get(i).setNewY(sc.getTankPoint()[i].y * 32);
+            sc.getItems().get(i).setOrientation(Item.Orientation.NORTH);
+            //iniciamos su thread
+
+            Tank t = (Tank) sc.getItems().get(i);
+            t.setTank_number(i);
+            new Thread(sc.getItems().get(i)).start();
             System.out.println(sc.getItems().get(i));
         }
         createBufferStrategy(2);
-        while (game) {
+        while (game && !checkWinner()) {
             paint();
             try {
                 Thread.sleep(7);
@@ -112,6 +133,8 @@ public class Viewer extends Canvas implements Runnable {
             return;
         }
         Graphics g = bs.getDrawGraphics();
+        g.setColor(Color.black);
+        g.fillRect(0, 0, getWidth(), getHeight());
         paintItems(g);
         paintTiles(g);
         bs.show();
@@ -128,7 +151,7 @@ public class Viewer extends Canvas implements Runnable {
     }
 
     private synchronized void paintTiles(Graphics g) {
-        if (sc.getTiles() == null || sc.getTiles().isEmpty()){
+        if (sc.getTiles() == null || sc.getTiles().isEmpty()) {
             return;
         }
         sc.getTiles().forEach((t) -> {
@@ -153,6 +176,10 @@ public class Viewer extends Canvas implements Runnable {
         }
     }
 
+    public synchronized boolean checkWinner() {
+        return this.clients.size() == 1;
+    }
+
     public AllowedAction itemCanDo(Item i) {
         if (checkCollision(i)) {
             return AllowedAction.BLOCKED;
@@ -162,57 +189,80 @@ public class Viewer extends Canvas implements Runnable {
 
     }
 
-    public boolean checkSlow(Item i) {
-        i.getAxisX();
-        i.getAxisY();
-        return true;
+    //---------------------------NOTIFICATIONS--------------------------------->
+    public void youLose(Tank t) {
+        t.youLose();
+    }
+
+    public void youWin(Tank t) {
+        t.youWin();
+    }
+
+    public void youTakeDmg(Tank t) {
+        t.youTakeDmg();
     }
 
     //---------------------------COLLISIONS------------------------------------>
     public boolean checkCollision(Item i) {
 
         //following if's check if collides with walls
-        if (i.getNewX() > this.dim.width) {
+        if (i.getNewX() >= this.dim.width) {
             return true;
         }
-        if (i.getNewY() > this.dim.height) {
+        if (i.getNewX() <= 0) {
+            return true;
+        }
+        if (i.getNewY() <= 0) {
+            return true;
+        }
+        if (i.getNewY() >= this.dim.height) {
             return true;
         }
         //following if's check if collides with items or tiles
-        if (this.checkCollisionWithItems(i, this.sc.getItems())) {
+        if (this.checkCollisionWithItems(i)) {
             return true;
         }
-        if (this.checkCollisionWithTiles(i, this.sc.getTiles())) {
+        if (this.checkCollisionWithTiles(i)) {
             return true;
         }
         return false;
     }
 
-    private boolean checkCollisionWithTiles(Item i, ArrayList<Tile> t) {
-        for (Tile x : t) {
-            for (int j = 0; j <= 32; j++) {
-                if ((x.getCoordinateX() + j == i.getNewX()
-                        || x.getCoordinateY() + j == i.getNewY())
-                        && !x.getClass().getSimpleName().equals("Grass")
-                        || !x.getClass().getSimpleName().equals("Water")) {
+    private synchronized boolean checkCollisionWithTiles(Item proxy_item) {
 
+        Rectangle proxy_rectangle = new Rectangle(proxy_item.getNewX(), proxy_item.getNewY(), 32, 32);
+        for (Tile tile : this.sc.getTiles()) {
+            Rectangle tile_rectangle = new Rectangle(tile.getCoordinateX(), tile.getCoordinateY(), 32, 32);
+            if (!tile.getClass().getSimpleName().equals("Grass")
+                    && proxy_rectangle.intersects(tile_rectangle)) {
+                if (!tile.getClass().getSimpleName().equals("Water")
+                        && !proxy_item.getClass().getSimpleName().equals("Bullet")) {
                     return true;
+                } else if (tile.getClass().getSimpleName().equals("Brick") && proxy_item.getClass().getSimpleName().equals("Bullet")) {
+                    Brick b = (Brick) tile;
+                    proxy_item.colide();
+                    b.getDmg();
+                    if (b.getLife() == 0) {
+                        this.sc.getTiles().remove(b);
+                    }
                 }
             }
         }
         return false;
+
     }
 
-    private boolean checkCollisionWithItems(Item i, ArrayList<Item> allItems) {
-        for (Item x : allItems) {
-            if (x != i && !x.getClass().getSimpleName().equals("Bullet")) {
-                for (int j = 0; j <= 32; j++) {
-                    if ((x.getAxisX() + j == i.getNewX()
-                            || x.getAxisY() + j == i.getNewY())) {
-                        x.takeDmg();
-                        return true;
-                    }
+    private synchronized boolean checkCollisionWithItems(Item proxy_item) {
+        Rectangle proxy_rectangle = new Rectangle(proxy_item.getNewX(), proxy_item.getNewY(), 32, 32);
+        for (Item item : this.sc.getItems()) {
+            if (item != proxy_item && !item.getClass().getSimpleName().equals("Bullet")) {
+                Rectangle item_rectangle = new Rectangle(item.getAxisX(), item.getAxisY(), 32, 32);
+                if (item_rectangle.intersects(proxy_rectangle) && proxy_item.getClass().getSimpleName().equals("Bullet")) {
+                    item.evaluate(AllowedAction.TAKEDMG);
+                    proxy_item.colide();
+                    return true;
                 }
+                return item_rectangle.intersects(proxy_rectangle);
             }
         }
         return false;
