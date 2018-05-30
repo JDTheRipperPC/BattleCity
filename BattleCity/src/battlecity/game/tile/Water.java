@@ -1,16 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package battlecity.game.tile;
 
 import battlecity.game.Tile;
+import battlecity.util.BufferedImageLoader;
 
 /**
  *
  * @author xGod
  */
-public class Water extends Tile{
-    
+public class Water extends Tile {
+
+    public Water() {
+        super.setBi(BufferedImageLoader
+                .getInstance()
+                .getBufferMap()
+                .get("tile_water")
+        );
+    }
+
 }

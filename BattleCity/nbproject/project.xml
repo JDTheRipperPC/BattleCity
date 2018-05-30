@@ -6,10 +6,15 @@
             <name>BattleCity</name>
             <source-roots>
                 <root id="src.dir"/>
+                <root id="src.res.dir" name="Resource Packages"/>
+                <root id="src.nbproject.dir" name="NetBeans Project Packages"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>
             </test-roots>
         </data>
+        <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
+            <definitions>.\lib\nblibraries.properties</definitions>
+        </libraries>
     </configuration>
 </project>
