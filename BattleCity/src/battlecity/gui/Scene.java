@@ -34,8 +34,8 @@ public class Scene {
         tankPoint = new Point[4];
     }
 
-    public void load() {
-        try (Reader reader = new InputStreamReader(new FileInputStream("res/scene/map1.json"))) {
+    public void load(String map) {
+        try (Reader reader = new InputStreamReader(new FileInputStream(map))) {
             Gson gson = new GsonBuilder().create();
             JsonScene sc = gson.fromJson(reader, JsonScene.class);
             System.out.println(sc);

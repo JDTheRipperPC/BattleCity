@@ -1,15 +1,22 @@
 package battlecity;
 
+import battlecity.game.Item;
 import battlecity.gui.Viewer;
 import battlecity.socket.GameServerSocket;
 import battlecity.util.AudioPlayer;
 import battlecity.util.BufferedImageLoader;
+import battlecity.util.BufferedImageUtil;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.embed.swing.JFXPanel;
@@ -31,11 +38,14 @@ public class Main extends JFrame implements KeyListener {
     private SpringLayout sl;
 
     private JPanel mainPanel, menuPanel;
-    private JLabel logoLabel, menuLabel;
+    private JLabel logoLabel, menuLabel, menuLabel2;
 
     private Viewer viewer;
 
     private JLabel[] players;
+    private JLabel[] maps;
+
+    private int point, maxPoint;
 
     public Main() {
         initProperties();
@@ -63,6 +73,7 @@ public class Main extends JFrame implements KeyListener {
         initMenuPanel();
         initViewer();
         initPlayers();
+        initMaps();
     }
 
     private void initMainPanel() {
@@ -107,6 +118,15 @@ public class Main extends JFrame implements KeyListener {
         sl.putConstraint(SpringLayout.WEST, menuLabel, 0, SpringLayout.WEST, menuPanel);
         sl.putConstraint(SpringLayout.EAST, menuLabel, 0, SpringLayout.EAST, menuPanel);
         menuPanel.add(menuLabel, sl);
+        
+        menuLabel2 = new JLabel();
+        menuLabel2.setText("Press <Left> or <Right> kay arrow to change the map!");
+        menuLabel2.setForeground(Color.red);
+        menuLabel2.setHorizontalAlignment(SwingConstants.CENTER);
+        sl.putConstraint(SpringLayout.NORTH, menuLabel2, 325, SpringLayout.NORTH, menuPanel);
+        sl.putConstraint(SpringLayout.WEST, menuLabel2, 0, SpringLayout.WEST, menuPanel);
+        sl.putConstraint(SpringLayout.EAST, menuLabel2, 0, SpringLayout.EAST, menuPanel);
+        menuPanel.add(menuLabel2, sl);
     }
 
     private void initViewer() {
@@ -114,11 +134,8 @@ public class Main extends JFrame implements KeyListener {
         viewer = new Viewer(viewDimension);
         sl.putConstraint(SpringLayout.NORTH, viewer, 0, SpringLayout.NORTH, mainPanel);
         sl.putConstraint(SpringLayout.WEST, viewer, 0, SpringLayout.WEST, mainPanel);
-
         mainPanel.add(viewer, sl);
-
-        /**/
-        viewer.getSc().load();
+        viewer.setMenu(this);
     }
 
     private void initPlayers() {
@@ -162,6 +179,43 @@ public class Main extends JFrame implements KeyListener {
         players[3].setVisible(false);
     }
 
+    private void initMaps() {
+        Properties prop = new Properties();
+        try {
+            InputStream is = new FileInputStream("res/conf/maps.properties");
+            prop.load(is);
+        } catch (IOException ex) {
+            System.err.println("Error, unable to find maps file");
+            return;
+        }
+        maps = new JLabel[prop.size()];
+        maxPoint = prop.size() - 1;
+        Enumeration<?> e = prop.propertyNames();
+        int i = 0;
+        while (e.hasMoreElements()) {
+            
+            String key = (String) e.nextElement();
+            String value = prop.getProperty(key);
+            
+            System.out.println(value);
+            
+            maps[i] = new JLabel();
+            maps[i].setText(value);
+            maps[i].setForeground(Color.white);
+            maps[i].setHorizontalAlignment(SwingConstants.CENTER);
+            maps[i].setVisible(false);
+            BufferedImage bi = BufferedImageLoader.getInstance().getBufferMap().get("map" + i + "_preview");
+            maps[i].setIcon(new ImageIcon(BufferedImageUtil.resize(bi, 50, 50)));
+            sl.putConstraint(SpringLayout.SOUTH, maps[i], -20, SpringLayout.SOUTH, menuPanel);
+            sl.putConstraint(SpringLayout.WEST, maps[i], 0, SpringLayout.WEST, menuPanel);
+            sl.putConstraint(SpringLayout.EAST, maps[i], 0, SpringLayout.EAST, menuPanel);
+            menuPanel.add(maps[i], sl);
+            i++;
+        }
+        point = 0;
+        maps[point].setVisible(true);
+    }
+
     private void initServer() {
         GameServerSocket gss = new GameServerSocket(2020, viewer);
         gss.start();
@@ -181,7 +235,7 @@ public class Main extends JFrame implements KeyListener {
                 for (int i = 1; i <= players.length; i++) {
                     if (viewer.getClients().size() >= i) {
                         // Send message to all clients with the player asigned
-                        viewer.getClients().get(i-1).sendMessage("msgPlayer" + i);
+                        viewer.getClients().get(i - 1).sendMessage("msgPlayer" + i);
                         players[i - 1].setVisible(true);
                     }
                 }
@@ -191,6 +245,22 @@ public class Main extends JFrame implements KeyListener {
                 }
             }
         }).start();
+    }
+
+    public void resetMenu() {
+        viewer.getSc().getTiles().clear();
+        for (Item i : viewer.getSc().getItems()){
+            i.setLife(0);
+        }
+        viewer.getSc().getItems().clear(); // Fix after change it by tank and bullet
+        viewer.getClients().clear();
+        viewer.getSc().load(maps[point].getText());
+        mainPanel.setVisible(false);
+        menuPanel.setVisible(true);
+        for(JLabel p :players){
+            p.setVisible(false);
+        }
+        initMenuRefresh();
     }
 
     static { // Needed to play sound in background (eg. explosions)
@@ -222,10 +292,21 @@ public class Main extends JFrame implements KeyListener {
             if (viewer.getClients().size() < 2) {
                 System.err.println("Faltan jugadores");
             } else {
+                viewer.getSc().load(maps[point].getText());
                 menuPanel.setVisible(false);
                 mainPanel.setVisible(true);
                 new Thread(viewer).start();
             }
+        }
+        if(e.getKeyCode() == 39 && point < maxPoint){
+            maps[point].setVisible(false);
+            point++;
+            maps[point].setVisible(true);
+        }
+        if(e.getKeyCode() == 37 && point > 0){
+            maps[point].setVisible(false);
+            point--;
+            maps[point].setVisible(true);
         }
     }
 
