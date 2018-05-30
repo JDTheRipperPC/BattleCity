@@ -22,7 +22,7 @@ public class Tank extends Item {
 
     public Tank(BufferedImage imagenPath, ClientSocket cs) {
         super(imagenPath);
-        aceleration = 1f;
+        aceleration = 0.5f;
         deceleration = 0.5f;
         maxspeed = 2; //times that will repaint at speed of 1 =/
         this.cs = cs;
@@ -221,8 +221,7 @@ public class Tank extends Item {
         } else {
             this.aceleration = super.getOrientation().getAxisX();
             super.setSpeedX(this.aceleration);
-        }
-        System.out.println(this);
+        }     
     }
 
     public ClientSocket getClientSocket() {

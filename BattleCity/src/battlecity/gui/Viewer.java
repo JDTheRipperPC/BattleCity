@@ -125,7 +125,7 @@ public class Viewer extends Canvas implements Runnable {
             System.out.println(sc.getTanks().get(i));
         }
         createBufferStrategy(2);
-        game = false; // REMOVE ME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
         while (game && !checkWinner()) {
             paint();
             try {
@@ -133,6 +133,7 @@ public class Viewer extends Canvas implements Runnable {
             } catch (InterruptedException ex) {
             }
         }
+        System.out.println(this.sc.getTanks().get(0).getId());
         System.out.println("game end");
         menu.resetMenu();
     }

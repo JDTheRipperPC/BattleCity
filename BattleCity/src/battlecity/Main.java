@@ -249,10 +249,14 @@ public class Main extends JFrame implements KeyListener {
 
     public void resetMenu() {
         viewer.getSc().getTiles().clear();
-        for (Item i : viewer.getSc().getItems()){
+        for (Item i : viewer.getSc().getTanks()){
             i.setLife(0);
         }
-        viewer.getSc().getItems().clear(); // Fix after change it by tank and bullet
+        for (Item i : viewer.getSc().getBullets()){
+            i.setLife(0);
+        }
+        viewer.getSc().getBullets().clear(); // Fix after change it by tank and bullet
+        viewer.getSc().getTanks().clear(); // Fix after change it by tank and bullet
         viewer.getClients().clear();
         viewer.getSc().load(maps[point].getText());
         mainPanel.setVisible(false);
