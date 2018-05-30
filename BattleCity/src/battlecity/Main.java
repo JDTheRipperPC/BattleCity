@@ -1,6 +1,7 @@
 package battlecity;
 
 import battlecity.game.Item;
+import battlecity.gui.Statistics;
 import battlecity.gui.Viewer;
 import battlecity.socket.GameServerSocket;
 import battlecity.util.AudioPlayer;
@@ -39,6 +40,7 @@ public class Main extends JFrame implements KeyListener {
 
     private JPanel mainPanel, menuPanel;
     private JLabel logoLabel, menuLabel, menuLabel2;
+    private Statistics statistics;
 
     private Viewer viewer;
 
@@ -74,6 +76,7 @@ public class Main extends JFrame implements KeyListener {
         initViewer();
         initPlayers();
         initMaps();
+        initStatistics();
     }
 
     private void initMainPanel() {
@@ -118,7 +121,7 @@ public class Main extends JFrame implements KeyListener {
         sl.putConstraint(SpringLayout.WEST, menuLabel, 0, SpringLayout.WEST, menuPanel);
         sl.putConstraint(SpringLayout.EAST, menuLabel, 0, SpringLayout.EAST, menuPanel);
         menuPanel.add(menuLabel, sl);
-        
+
         menuLabel2 = new JLabel();
         menuLabel2.setText("Press <Left> or <Right> kay arrow to change the map!");
         menuLabel2.setForeground(Color.red);
@@ -193,12 +196,12 @@ public class Main extends JFrame implements KeyListener {
         Enumeration<?> e = prop.propertyNames();
         int i = 0;
         while (e.hasMoreElements()) {
-            
+
             String key = (String) e.nextElement();
             String value = prop.getProperty(key);
-            
+
             System.out.println(value);
-            
+
             maps[i] = new JLabel();
             maps[i].setText(value);
             maps[i].setForeground(Color.white);
@@ -214,6 +217,13 @@ public class Main extends JFrame implements KeyListener {
         }
         point = 0;
         maps[point].setVisible(true);
+    }
+
+    private void initStatistics() {
+        statistics = new Statistics(224, 605, viewer);
+        sl.putConstraint(SpringLayout.NORTH, statistics, 0, SpringLayout.NORTH, mainPanel);
+        sl.putConstraint(SpringLayout.EAST, statistics, 0, SpringLayout.EAST, mainPanel);
+        mainPanel.add(statistics, sl);
     }
 
     private void initServer() {
@@ -249,10 +259,10 @@ public class Main extends JFrame implements KeyListener {
 
     public void resetMenu() {
         viewer.getSc().getTiles().clear();
-        for (Item i : viewer.getSc().getTanks()){
+        for (Item i : viewer.getSc().getTanks()) {
             i.setLife(0);
         }
-        for (Item i : viewer.getSc().getBullets()){
+        for (Item i : viewer.getSc().getBullets()) {
             i.setLife(0);
         }
         viewer.getSc().getBullets().clear(); // Fix after change it by tank and bullet
@@ -261,7 +271,7 @@ public class Main extends JFrame implements KeyListener {
         viewer.getSc().load(maps[point].getText());
         mainPanel.setVisible(false);
         menuPanel.setVisible(true);
-        for(JLabel p :players){
+        for (JLabel p : players) {
             p.setVisible(false);
         }
         initMenuRefresh();
@@ -300,14 +310,15 @@ public class Main extends JFrame implements KeyListener {
                 menuPanel.setVisible(false);
                 mainPanel.setVisible(true);
                 new Thread(viewer).start();
+                new Thread(statistics).start();
             }
         }
-        if(e.getKeyCode() == 39 && point < maxPoint){
+        if (e.getKeyCode() == 39 && point < maxPoint) {
             maps[point].setVisible(false);
             point++;
             maps[point].setVisible(true);
         }
-        if(e.getKeyCode() == 37 && point > 0){
+        if (e.getKeyCode() == 37 && point > 0) {
             maps[point].setVisible(false);
             point--;
             maps[point].setVisible(true);
