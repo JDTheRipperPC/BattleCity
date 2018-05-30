@@ -64,12 +64,13 @@ public class ClientSocket extends Thread {
 
     @Override
     public void run() {
-        String msg;
-        System.out.println(this);
+        String msg;        
         while (tank.getLife() > 0) {
             try {
                 msg = br.readLine();
-                evaluateMessage(msg);
+                if (tank.getViewer()!= null) {
+                    evaluateMessage(msg);
+                }
             } catch (IOException ex) {
                 System.err.println(ex.getMessage());
             }
@@ -77,6 +78,7 @@ public class ClientSocket extends Thread {
     }
 
     private void evaluateMessage(String msg) {
+
         switch (msg) {
             case "up":
                 tank.goUp();
@@ -110,7 +112,7 @@ public class ClientSocket extends Thread {
     }
 
     public void youLose() {
-       this.sendMessage("lose");
+        this.sendMessage("lose");
     }
 
     public void youWin() {
@@ -120,21 +122,21 @@ public class ClientSocket extends Thread {
     public void youTakeDmg() {
         this.sendMessage("dmg");
     }
-    
-    private void goUp(){
-        
+
+    private void goUp() {
+
     }
-    
-    private void goDown(){
-        
+
+    private void goDown() {
+
     }
-    
-    private void goLeft(){
-        
+
+    private void goLeft() {
+
     }
-    private void goRight(){
-        
+
+    private void goRight() {
+
     }
-    
 
 }
